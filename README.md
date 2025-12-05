@@ -218,7 +218,10 @@ zama-bounty-11/
 ├── scripts/                    # Automation tools
 │   ├── create-fhevm-example.ts # Single example generator
 │   ├── create-fhevm-category.ts # Category generator
-│   └── generate-docs.ts        # Documentation generator
+│   ├── generate-docs.ts        # Documentation generator
+│   ├── fhevm-studio.ts        # Interactive CLI tool
+│   ├── generate-all-examples-and-test.ts # Batch generation and testing
+│   └── update-dependencies.ts  # Dependency management tool
 ├── examples/                   # 27 auto-generated docs
 │   └── SUMMARY.md              # Documentation index
 ├── docs/                       # Developer guides
