@@ -40,8 +40,8 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd zama-bounty-11
+git clone https://github.com/00Xchriswilder-fhevm-hub/bounty-11.git
+cd bounty-11
 
 # Install dependencies
 npm install
@@ -124,11 +124,55 @@ npm run generate-all-and-test -- --category openzeppelin
 - `openzeppelin` (9 examples)
 - `advanced` (4 examples)
 
+### 🎨 FHEVM Studio (Interactive CLI)
+
+Launch an interactive command-line interface for exploring, generating, and testing FHEVM examples with a beautiful menu-driven experience!
+
+```bash
+# Launch FHEVM Studio
+npm run studio
+```
+
+**Studio Features:**
+
+1. **Generate Single Example** - Generate and test one example interactively
+2. **Generate Category Project** - Generate all examples in a category
+3. **Test Generated Example** - Test an already generated example
+4. **Generate Documentation** - Generate documentation for examples
+5. **Cleanup Test Outputs** - Remove test output directories
+6. **Show Available Examples** - List all available examples with descriptions
+7. **Generate All Examples and Test** - Batch generate all examples with docs and run tests
+8. **Exit Studio** - Exit the interactive session
+
+**Example Studio Workflow:**
+
+```bash
+npm run studio
+
+# Select option 1: Generate Single Example
+# Choose an example from the list (e.g., "fhe-counter")
+# Choose output directory (or press Enter for default)
+# Choose whether to generate documentation (Y/n)
+# Choose whether to test after generation (Y/n)
+
+# Select option 7: Generate All Examples and Test
+# Choose whether to skip tests (y/N)
+# Watch as all examples are generated and tested automatically!
+```
+
+**Studio Benefits:**
+- 🎯 Interactive menu-driven interface
+- 📚 Browse all examples with descriptions
+- 🚀 Quick generation and testing workflow
+- 🧹 Easy cleanup of generated outputs
+- 📊 Session summary with statistics
+- ✨ Beautiful terminal UI with colors and formatting
+
 ## 📁 Project Structure
 
 ```
 zama-bounty-11/
-├── base-template/              # Base Hardhat template (cloned)
+├── fhevm-hardhat-template/     # Base Hardhat template (cloned)
 ├── contracts/                  # 29 example contracts
 │   ├── basic/                  # 9 basic examples
 │   │   ├── FHECounter.sol
@@ -443,9 +487,9 @@ npm run update-dependencies -- --package <package-name> <version> --all --base-t
 
 **Manual Method (if needed):**
 
-1. **Update base-template:**
-   - Update `base-template/package.json`
-   - Run `npm install` in base-template
+1. **Update fhevm-hardhat-template:**
+   - Update `fhevm-hardhat-template/package.json`
+   - Run `npm install` in fhevm-hardhat-template
 
 2. **Update main project:**
    - Update `zama-bounty-11/package.json`
@@ -462,7 +506,7 @@ zama-bounty-11/
 ├── contracts/            # Example contracts (35)
 ├── test/                 # Test files (35)
 ├── docs/                 # Generated documentation (35)
-├── base-template/        # Base Hardhat template (inside project)
+├── fhevm-hardhat-template/  # Base Hardhat template (inside project)
 ├── output/               # Generated standalone examples
 ├── categories/           # Generated category projects
 └── README.md             # This file
@@ -581,14 +625,14 @@ function getValue() external view returns (euint32) { // ❌ Won't work
 
 The base template is cloned, so dependencies are managed per generated repository. To update:
 
-1. Update `base-template/package.json`
+1. Update `fhevm-hardhat-template/package.json`
 2. Regenerate examples using automation scripts
 
 ## 📋 Deliverables Checklist
 
 ### Required Deliverables
 
-- ✅ **base-template/** - Complete Hardhat template with @fhevm/solidity
+- ✅ **fhevm-hardhat-template/** - Complete Hardhat template with @fhevm/solidity
 - ✅ **Automation Scripts** - create-fhevm-example and related tools in TypeScript
 - ✅ **Example Repositories** - Multiple fully working example repos
 - ✅ **Documentation** - Auto-generated documentation per example
