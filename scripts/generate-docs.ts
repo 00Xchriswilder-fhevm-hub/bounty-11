@@ -1,0 +1,922 @@
+#!/usr/bin/env ts-node
+
+/**
+ * generate-docs - Generates GitBook-formatted documentation from contracts and tests
+ *
+ * Usage: ts-node scripts/generate-docs.ts <example-name> [options]
+ *
+ * Example: ts-node scripts/generate-docs.ts fhe-counter --output examples/
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Color codes for terminal output
+enum Color {
+  Reset = '\x1b[0m',
+  Green = '\x1b[32m',
+  Blue = '\x1b[34m',
+  Yellow = '\x1b[33m',
+  Red = '\x1b[31m',
+  Cyan = '\x1b[36m',
+}
+
+function log(message: string, color: Color = Color.Reset): void {
+  console.log(`${color}${message}${Color.Reset}`);
+}
+
+function success(message: string): void {
+  log(`✅ ${message}`, Color.Green);
+}
+
+function info(message: string): void {
+  log(`ℹ️  ${message}`, Color.Blue);
+}
+
+function error(message: string): never {
+  log(`❌ Error: ${message}`, Color.Red);
+  process.exit(1);
+}
+
+// Documentation configuration interface
+interface DocsConfig {
+  title: string;
+  description: string;
+  contract: string;
+  test: string;
+  output: string;
+  category: string;
+  chapter?: string; // Chapter tag for GitBook organization (e.g., "access-control", "relayer")
+}
+
+// Generate documentation options
+interface GenerateDocsOptions {
+  noSummary?: boolean;
+}
+
+// Example configurations
+const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
+  // Basic Examples
+  'fhe-counter': {
+    title: 'FHE Counter',
+    description: 'This example demonstrates how to build a confidential counter using FHEVM.',
+    contract: 'contracts/basic/FHECounter.sol',
+    test: 'test/basic/FHECounter.ts',
+    output: 'docs/fhe-counter.md',
+    category: 'Basic',
+  },
+  'encrypt-single-value': {
+    title: 'Encrypt Single Value',
+    description: 'This example demonstrates the FHE encryption mechanism and highlights a common pitfall developers may encounter.',
+    contract: 'contracts/basic/encrypt/EncryptSingleValue.sol',
+    test: 'test/basic/encrypt/EncryptSingleValue.ts',
+    output: 'docs/fhe-encrypt-single-value.md',
+    category: 'Basic - Encryption',
+  },
+  'encrypt-multiple-values': {
+    title: 'Encrypt Multiple Values',
+    description: 'This example shows how to encrypt and handle multiple values in a single transaction.',
+    contract: 'contracts/basic/encrypt/EncryptMultipleValues.sol',
+    test: 'test/basic/encrypt/EncryptMultipleValues.ts',
+    output: 'docs/fhe-encrypt-multiple-values.md',
+    category: 'Basic - Encryption',
+  },
+  'user-decrypt-single-value': {
+    title: 'User Decrypt Single Value',
+    description: 'This example demonstrates the FHE user decryption mechanism and highlights common pitfalls developers may encounter.',
+    contract: 'contracts/basic/decrypt/UserDecryptSingleValue.sol',
+    test: 'test/basic/decrypt/UserDecryptSingleValue.ts',
+    output: 'docs/fhe-user-decrypt-single-value.md',
+    category: 'Basic - Decryption',
+  },
+  'user-decrypt-multiple-values': {
+    title: 'User Decrypt Multiple Values',
+    description: 'This example shows how to decrypt multiple encrypted values for a user.',
+    contract: 'contracts/basic/decrypt/UserDecryptMultipleValues.sol',
+    test: 'test/basic/decrypt/UserDecryptMultipleValues.ts',
+    output: 'docs/fhe-user-decrypt-multiple-values.md',
+    category: 'Basic - Decryption',
+  },
+  'public-decrypt-single-value': {
+    title: 'Public Decrypt Single Value',
+    description: 'This example demonstrates public decryption mechanism.',
+    contract: 'contracts/basic/decrypt/PublicDecryptSingleValue.sol',
+    test: 'test/basic/decrypt/PublicDecryptSingleValue.ts',
+    output: 'docs/fhe-public-decrypt-single-value.md',
+    category: 'Basic - Decryption',
+  },
+  'public-decrypt-multiple-values': {
+    title: 'Public Decrypt Multiple Values',
+    description: 'This example shows public decryption with multiple values.',
+    contract: 'contracts/basic/decrypt/PublicDecryptMultipleValues.sol',
+    test: 'test/basic/decrypt/PublicDecryptMultipleValues.ts',
+    output: 'docs/fhe-public-decrypt-multiple-values.md',
+    category: 'Basic - Decryption',
+  },
+  'fhe-add': {
+    title: 'FHE Add Operation',
+    description: 'This example demonstrates how to perform addition operations on encrypted values.',
+    contract: 'contracts/basic/fhe-operations/FHEAdd.sol',
+    test: 'test/basic/fhe-operations/FHEAdd.ts',
+    output: 'docs/fheadd.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-if-then-else': {
+    title: 'FHE If-Then-Else',
+    description: 'This example shows conditional operations on encrypted values using FHE.',
+    contract: 'contracts/basic/fhe-operations/FHEIfThenElse.sol',
+    test: 'test/basic/fhe-operations/FHEIfThenElse.ts',
+    output: 'docs/fheifthenelse.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-min': {
+    title: 'FHE Min Operation',
+    description: 'This example demonstrates FHE.min operation to find minimum of two encrypted values.',
+    contract: 'contracts/basic/fhe-operations/FHEMin.sol',
+    test: 'test/basic/fhe-operations/FHEMin.ts',
+    output: 'docs/fhe-min.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-mul': {
+    title: 'FHE Mul Operation',
+    description: 'This example demonstrates FHE.mul operation to multiply two encrypted values.',
+    contract: 'contracts/basic/fhe-operations/FHEMul.sol',
+    test: 'test/basic/fhe-operations/FHEMul.ts',
+    output: 'docs/fhe-mul.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-xor': {
+    title: 'FHE Xor Operation',
+    description: 'This example demonstrates FHE.xor operation for bitwise XOR on encrypted values.',
+    contract: 'contracts/basic/fhe-operations/FHEXor.sol',
+    test: 'test/basic/fhe-operations/FHEXor.ts',
+    output: 'docs/fhe-xor.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-div': {
+    title: 'FHE Div Operation',
+    description: 'This example demonstrates FHE.div operation to divide two encrypted values.',
+    contract: 'contracts/basic/fhe-operations/FHEDiv.sol',
+    test: 'test/basic/fhe-operations/FHEDiv.ts',
+    output: 'docs/fhe-div.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-bitwise': {
+    title: 'FHE Bitwise Operations',
+    description: 'This example demonstrates FHE.and, FHE.or, and FHE.not operations.',
+    contract: 'contracts/basic/fhe-operations/FHEBitwise.sol',
+    test: 'test/basic/fhe-operations/FHEBitwise.ts',
+    output: 'docs/fhe-bitwise.md',
+    category: 'Basic - FHE Operations',
+  },
+  // Access Control Examples
+  'access-control': {
+    title: 'Access Control',
+    description: 'Demonstrates FHE access control using FHE.allow() and FHE.allowThis(). Shows how to grant permissions to contracts and users.',
+    contract: 'contracts/access-control/AccessControl.sol',
+    test: 'test/access-control/AccessControl.ts',
+    output: 'docs/access-control.md',
+    category: 'Access Control',
+  },
+  'allow-transient': {
+    title: 'Allow Transient',
+    description: 'Demonstrates FHE.allowTransient() for temporary permissions. Shows when to use transient vs permanent permissions.',
+    contract: 'contracts/access-control/AllowTransient.sol',
+    test: 'test/access-control/AllowTransient.ts',
+    output: 'docs/allow-transient.md',
+    category: 'Access Control',
+  },
+  'permission-examples': {
+    title: 'Permission Examples',
+    description: 'Various FHE permission scenarios and patterns. Demonstrates permission inheritance and common patterns.',
+    contract: 'contracts/access-control/PermissionExamples.sol',
+    test: 'test/access-control/PermissionExamples.ts',
+    output: 'docs/permission-examples.md',
+    category: 'Access Control',
+  },
+  // Input Proof Examples
+  'input-proof-basics': {
+    title: 'Input Proof Basics',
+    description: 'Explains what input proofs are and why they are needed. Demonstrates the relationship between encryption and proofs.',
+    contract: 'contracts/input-proofs/InputProofBasics.sol',
+    test: 'test/input-proofs/InputProofBasics.ts',
+    output: 'docs/input-proof-basics.md',
+    category: 'Input Proofs',
+  },
+  'input-proof-usage': {
+    title: 'Input Proof Usage',
+    description: 'Demonstrates correct usage of input proofs. Shows matching encryption signer with transaction signer.',
+    contract: 'contracts/input-proofs/InputProofUsage.sol',
+    test: 'test/input-proofs/InputProofUsage.ts',
+    output: 'docs/input-proof-usage.md',
+    category: 'Input Proofs',
+  },
+  'input-proof-anti-patterns': {
+    title: 'Input Proof Anti-Patterns',
+    description: 'Common mistakes with input proofs and how to avoid them. Shows what happens with invalid proofs.',
+    contract: 'contracts/input-proofs/InputProofAntiPatterns.sol',
+    test: 'test/input-proofs/InputProofAntiPatterns.ts',
+    output: 'docs/input-proof-anti-patterns.md',
+    category: 'Input Proofs',
+  },
+  'handle-lifecycle': {
+    title: 'Handle Lifecycle',
+    description: 'Understanding how handles are generated and their lifecycle. Demonstrates symbolic execution.',
+    contract: 'contracts/input-proofs/HandleLifecycle.sol',
+    test: 'test/input-proofs/HandleLifecycle.ts',
+    output: 'docs/handle-lifecycle.md',
+    category: 'Input Proofs',
+  },
+  // Anti-Pattern Examples
+  'view-with-encrypted': {
+    title: 'View With Encrypted',
+    description: 'Why view functions cannot return encrypted values. Shows correct alternative patterns.',
+    contract: 'contracts/anti-patterns/ViewWithEncrypted.sol',
+    test: 'test/anti-patterns/ViewWithEncrypted.ts',
+    output: 'docs/view-with-encrypted.md',
+    category: 'Anti-Patterns',
+  },
+  'missing-allow-this': {
+    title: 'Missing AllowThis',
+    description: 'What happens when FHE.allowThis() permission is missing. Demonstrates why both permissions are needed.',
+    contract: 'contracts/anti-patterns/MissingAllowThis.sol',
+    test: 'test/anti-patterns/MissingAllowThis.ts',
+    output: 'docs/missing-allow-this.md',
+    category: 'Anti-Patterns',
+  },
+  'handle-misuse': {
+    title: 'Handle Misuse',
+    description: 'Incorrect handle usage patterns and correct alternatives. Shows why handles are contract-specific.',
+    contract: 'contracts/anti-patterns/HandleMisuse.sol',
+    test: 'test/anti-patterns/HandleMisuse.ts',
+    output: 'docs/handle-misuse.md',
+    category: 'Anti-Patterns',
+  },
+  // OpenZeppelin Examples
+  'erc7984-example': {
+    title: 'ERC7984 Example',
+    description: 'Basic ERC7984 confidential token implementation. Demonstrates minting, burning, and confidential transfers.',
+    contract: 'contracts/openzeppelin/ERC7984Mock.sol',
+    test: 'test/openzeppelin/ERC7984Example.ts',
+    output: 'docs/erc7984-example.md',
+    category: 'OpenZeppelin',
+  },
+  'erc7984-to-erc20-wrapper': {
+    title: 'ERC7984 to ERC20 Wrapper',
+    description: 'Wraps ERC20 tokens into ERC7984 confidential tokens. Allows confidential operations on standard tokens.',
+    contract: 'contracts/openzeppelin/ERC7984ToERC20Wrapper.sol',
+    test: 'test/openzeppelin/ERC7984ToERC20Wrapper.ts',
+    output: 'docs/erc7984-to-erc20-wrapper.md',
+    category: 'OpenZeppelin',
+  },
+  'swap-erc7984-to-erc20': {
+    title: 'Swap ERC7984 to ERC20',
+    description: 'Swaps ERC7984 confidential tokens to ERC20 tokens. Demonstrates two-phase swap pattern with public decryption.',
+    contract: 'contracts/openzeppelin/SwapERC7984ToERC20.sol',
+    test: 'test/openzeppelin/SwapERC7984ToERC20.ts',
+    output: 'docs/swap-erc7984-to-erc20.md',
+    category: 'OpenZeppelin',
+  },
+  'swap-erc7984-to-erc7984': {
+    title: 'Swap ERC7984 to ERC7984',
+    description: 'Swaps between two ERC7984 confidential tokens. Demonstrates confidential-to-confidential transfers.',
+    contract: 'contracts/openzeppelin/SwapERC7984ToERC7984.sol',
+    test: 'test/openzeppelin/SwapERC7984ToERC7984.ts',
+    output: 'docs/swap-erc7984-to-erc7984.md',
+    category: 'OpenZeppelin',
+  },
+  'vesting-wallet': {
+    title: 'Vesting Wallet',
+    description: 'Confidential vesting wallet for ERC7984 tokens. Demonstrates time-based vesting with encrypted amounts.',
+    contract: 'contracts/openzeppelin/VestingWallet.sol',
+    test: 'test/openzeppelin/VestingWallet.ts',
+    output: 'docs/vesting-wallet.md',
+    category: 'OpenZeppelin',
+  },
+  'vesting-wallet-confidential': {
+    title: 'Vesting Wallet Confidential',
+    description: 'OpenZeppelin VestingWalletConfidential factory for creating confidential token vesting wallets.',
+    contract: 'contracts/openzeppelin/VestingWalletConfidentialFactoryMock.sol',
+    test: 'test/openzeppelin/VestingWalletConfidential.ts',
+    output: 'docs/vesting-wallet-confidential.md',
+    category: 'OpenZeppelin',
+  },
+  'vesting-wallet-cliff-confidential': {
+    title: 'Vesting Wallet Cliff Confidential',
+    description: 'OpenZeppelin VestingWalletCliffConfidential factory with cliff period for confidential tokens.',
+    contract: 'contracts/openzeppelin/VestingWalletCliffConfidentialFactoryMock.sol',
+    test: 'test/openzeppelin/VestingWalletCliffConfidential.ts',
+    output: 'docs/vesting-wallet-cliff-confidential.md',
+    category: 'OpenZeppelin',
+  },
+  'erc7984-rwa': {
+    title: 'ERC7984 RWA',
+    description: 'Demonstrates ERC7984 RWA (Real World Assets) with compliance features: pause, freeze, block users, and force transfers',
+    contract: 'contracts/openzeppelin/ERC7984RwaMock.sol',
+    test: 'test/openzeppelin/ERC7984RwaExample.ts',
+    output: 'docs/erc7984-rwa.md',
+    category: 'OpenZeppelin',
+  },
+  'confidential-voting': {
+    title: 'Confidential Voting',
+    description: 'OpenZeppelin ERC7984Votes for confidential governance. Demonstrates voting power tracking, delegation, and historical vote queries.',
+    contract: 'contracts/openzeppelin/ERC7984VotesMock.sol',
+    test: 'test/openzeppelin/ERC7984VotesExample.ts',
+    output: 'docs/confidential-voting.md',
+    category: 'OpenZeppelin',
+  },
+  // Advanced Examples
+  'fhe-legacy-vault': {
+    title: 'FHE Legacy Vault',
+    description: 'Secure vault system with time-locked access using FHEVM and IPFS. Demonstrates access control patterns.',
+    contract: 'contracts/advanced/FHELegacyVault.sol',
+    test: 'test/advanced/FHELegacyVault.ts',
+    output: 'docs/fhe-legacy-vault.md',
+    category: 'Advanced',
+  },
+  'simple-voting': {
+    title: 'Simple Voting',
+    description: 'Confidential voting system with encrypted votes and public decryption for tallies.',
+    contract: 'contracts/advanced/SimpleVoting.sol',
+    test: 'test/advanced/SimpleVoting.ts',
+    output: 'docs/simple-voting.md',
+    category: 'Advanced',
+  },
+  'review-cards-fhe': {
+    title: 'Review Cards FHE',
+    description: 'Review and rating system with encrypted ratings and public decryption for averages.',
+    contract: 'contracts/advanced/ReviewCardsFHE.sol',
+    test: 'test/advanced/ReviewCardsFHE.ts',
+    output: 'docs/review-cards-fhe.md',
+    category: 'Advanced',
+  },
+  'blind-auction': {
+    title: 'Blind Auction',
+    description: 'Confidential blind auction where bids are encrypted until reveal phase, demonstrating encrypted bid submission and public decryption.',
+    contract: 'contracts/advanced/BlindAuction.sol',
+    test: 'test/advanced/BlindAuction.ts',
+    output: 'docs/blind-auction.md',
+    category: 'Advanced',
+    chapter: 'advanced',
+  },
+};
+
+function readFile(filePath: string): string {
+  const rootDir = path.resolve(__dirname, '..');
+  const fullPath = path.join(rootDir, filePath);
+  if (!fs.existsSync(fullPath)) {
+    error(`File not found: ${filePath}`);
+  }
+  return fs.readFileSync(fullPath, 'utf-8');
+}
+
+function getContractName(content: string): string {
+  const match = content.match(/^\s*contract\s+(\w+)(?:\s+is\s+|\s*\{)/m);
+  return match ? match[1] : 'Contract';
+}
+
+function extractDescription(content: string): string {
+  // Extract description from first multi-line comment or @notice
+  const commentMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\s*\n/);
+  const noticeMatch = content.match(/@notice\s+(.+)/);
+
+  return commentMatch ? commentMatch[1] : (noticeMatch ? noticeMatch[1] : '');
+}
+
+function extractChapterTag(content: string): string | undefined {
+  // Look for chapter tag in comments: @chapter access-control, chapter: relayer, etc.
+  // Supports hyphenated tags like "access-control"
+  const patterns = [
+    /@chapter\s+([\w-]+)/i,
+    /chapter:\s*([\w-]+)/i,
+    /chapter\s*=\s*["']?([\w-]+)["']?/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = content.match(pattern);
+    if (match) {
+      return match[1].toLowerCase();
+    }
+  }
+  
+  return undefined;
+}
+
+// Helper function to extract example-specific operation
+function extractMainOperation(contractContent: string): string | null {
+  const operations = [
+    { pattern: /FHE\.min\(/g, name: 'FHE.min', description: 'finding the minimum of two encrypted values' },
+    { pattern: /FHE\.max\(/g, name: 'FHE.max', description: 'finding the maximum of two encrypted values' },
+    { pattern: /FHE\.add\(/g, name: 'FHE.add', description: 'adding encrypted values' },
+    { pattern: /FHE\.sub\(/g, name: 'FHE.sub', description: 'subtracting encrypted values' },
+    { pattern: /FHE\.mul\(/g, name: 'FHE.mul', description: 'multiplying encrypted values' },
+    { pattern: /FHE\.div\(/g, name: 'FHE.div', description: 'dividing encrypted values' },
+    { pattern: /FHE\.xor\(/g, name: 'FHE.xor', description: 'bitwise XOR on encrypted values' },
+    { pattern: /FHE\.and\(/g, name: 'FHE.and', description: 'bitwise AND on encrypted values' },
+    { pattern: /FHE\.or\(/g, name: 'FHE.or', description: 'bitwise OR on encrypted values' },
+    { pattern: /FHE\.not\(/g, name: 'FHE.not', description: 'bitwise NOT on encrypted values' },
+    { pattern: /FHE\.select\(/g, name: 'FHE.select', description: 'conditional selection (if-then-else) on encrypted values' },
+    { pattern: /FHE\.ge\(/g, name: 'FHE.ge', description: 'greater-than-or-equal comparison' },
+    { pattern: /FHE\.gt\(/g, name: 'FHE.gt', description: 'greater-than comparison' },
+    { pattern: /FHE\.le\(/g, name: 'FHE.le', description: 'less-than-or-equal comparison' },
+    { pattern: /FHE\.lt\(/g, name: 'FHE.lt', description: 'less-than comparison' },
+    { pattern: /FHE\.eq\(/g, name: 'FHE.eq', description: 'equality comparison' },
+  ];
+  
+  for (const op of operations) {
+    if (contractContent.match(op.pattern)) {
+      return op.name;
+    }
+  }
+  
+  return null;
+}
+
+// Helper function to extract key concepts from contract code - example-specific
+function extractKeyConcepts(contractContent: string, testContent: string, config: DocsConfig): string[] {
+  const concepts: string[] = [];
+  const mainOp = extractMainOperation(contractContent);
+  
+  // Example-specific operation
+  if (mainOp) {
+    concepts.push(`**${mainOp} operation** - How to perform this specific homomorphic operation on encrypted values`);
+  }
+  
+  // Only add encryption concepts if the example actually uses external encryption
+  if (contractContent.includes('FHE.fromExternal') || testContent.includes('createEncryptedInput')) {
+    concepts.push('**Off-chain encryption** - Encrypting values locally before sending to contract');
+  }
+  
+  // Only add permission concepts if permissions are actually used
+  if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
+    concepts.push('**FHE permissions** - Granting permissions for operations and decryption');
+  }
+  
+  // Only add decryption concepts if decryption is actually used
+  if (testContent.includes('userDecrypt')) {
+    concepts.push('**User decryption** - Decrypting results for authorized users');
+  }
+  
+  if (contractContent.includes('makePubliclyDecryptable') || testContent.includes('publicDecrypt')) {
+    concepts.push('**Public decryption** - Making results publicly decryptable');
+  }
+  
+  // Example-specific concepts based on category
+  if (config.category.includes('ERC7984')) {
+    concepts.push('**Confidential tokens** - Working with encrypted token balances and transfers');
+  }
+  
+  if (config.category.includes('Voting')) {
+    concepts.push('**Confidential voting** - Encrypted votes and private tallies');
+  }
+  
+  if (config.category.includes('Vesting')) {
+    concepts.push('**Time-based vesting** - Encrypted vesting schedules');
+  }
+  
+  return concepts;
+}
+
+// Helper function to extract pitfalls from test content
+function extractPitfalls(testContent: string): Array<{ title: string; description: string }> {
+  const pitfalls: Array<{ title: string; description: string }> = [];
+  
+  // Look for pitfall test descriptions - improved regex to capture full test body
+  const pitfallMatches = testContent.matchAll(/it\(["']([^"']+)["'][\s\S]*?\{([\s\S]*?)(?=\n\s*(?:it\(|describe\(|}))/g);
+  for (const match of pitfallMatches) {
+    const title = match[1];
+    const body = match[2] || '';
+    
+    // Only include tests that mention failure or pitfalls
+    if (title.toLowerCase().includes('fail') || title.toLowerCase().includes('pitfall') || 
+        title.toLowerCase().includes('wrong') || title.toLowerCase().includes('error') ||
+        title.toLowerCase().includes('should not')) {
+      // Extract comment description if present
+      const commentMatch = body.match(/\/\/\s*(.+?)(?:\n|$)/);
+      const description = commentMatch ? commentMatch[1].trim() : 
+                         (body.length > 100 ? body.substring(0, 150).trim() + '...' : body.trim());
+      
+      pitfalls.push({
+        title: title,
+        description: description || title
+      });
+    }
+  }
+  
+  // Also check for describe blocks with "Common Pitfalls" or "Error Cases"
+  const pitfallDescribeMatches = testContent.matchAll(/describe\(["']([^"']*(?:Pitfall|Error|fail)[^"']*)["'][\s\S]*?\{([\s\S]*?)(?=\n\s*(?:describe\(|}))/gi);
+  for (const match of pitfallDescribeMatches) {
+    const describeTitle = match[1];
+    const describeBody = match[2] || '';
+    
+    // Extract individual tests from the describe block
+    const testMatches = describeBody.matchAll(/it\(["']([^"']+)["'][\s\S]*?\{([\s\S]*?)(?=\n\s*(?:it\(|describe\(|}))/g);
+    for (const testMatch of testMatches) {
+      const testTitle = testMatch[1];
+      const testBody = testMatch[2] || '';
+      const commentMatch = testBody.match(/\/\/\s*(.+?)(?:\n|$)/);
+      const description = commentMatch ? commentMatch[1].trim() : testTitle;
+      
+      pitfalls.push({
+        title: testTitle,
+        description: description
+      });
+    }
+  }
+  
+  return pitfalls;
+}
+
+// Helper function to generate comprehensive documentation sections
+function generateComprehensiveSections(
+  config: DocsConfig,
+  contractContent: string,
+  testContent: string,
+  contractName: string
+): string {
+  let sections = '';
+  
+  // Overview section
+  sections += `## Overview\n\n`;
+  sections += `${config.description}\n\n`;
+  
+  // What You'll Learn section - example-specific
+  sections += `## What You'll Learn\n\n`;
+  const keyConcepts = extractKeyConcepts(contractContent, testContent, config);
+  if (keyConcepts.length > 0) {
+    keyConcepts.forEach(concept => {
+      sections += `- ${concept}\n`;
+    });
+  }
+  sections += `\n`;
+  
+  // Key Concepts section - only include what's relevant
+  const mainOp = extractMainOperation(contractContent);
+  let conceptNum = 1;
+  
+  sections += `## Key Concepts\n\n`;
+  
+  // Main operation concept (most important)
+  if (mainOp) {
+    const opDescriptions: Record<string, string> = {
+      'FHE.min': 'The `FHE.min()` function compares two encrypted values and returns the smaller one, all without decrypting either value.',
+      'FHE.max': 'The `FHE.max()` function compares two encrypted values and returns the larger one, all without decrypting either value.',
+      'FHE.add': 'The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.',
+      'FHE.sub': 'The `FHE.sub()` function performs subtraction on encrypted values, computing the difference without decrypting.',
+      'FHE.mul': 'The `FHE.mul()` function performs multiplication on encrypted values, computing the product without decrypting.',
+      'FHE.div': 'The `FHE.div()` function performs division on encrypted values, computing the quotient without decrypting.',
+      'FHE.xor': 'The `FHE.xor()` function performs bitwise XOR on encrypted values, computing the result without decrypting.',
+      'FHE.and': 'The `FHE.and()` function performs bitwise AND on encrypted values.',
+      'FHE.or': 'The `FHE.or()` function performs bitwise OR on encrypted values.',
+      'FHE.not': 'The `FHE.not()` function performs bitwise NOT (complement) on encrypted values.',
+      'FHE.select': 'The `FHE.select()` function performs conditional selection (if-then-else) on encrypted values based on an encrypted boolean condition.',
+    };
+    
+    sections += `### ${conceptNum}. ${mainOp} Operation\n\n`;
+    sections += `${opDescriptions[mainOp] || `The \`${mainOp}\` function performs homomorphic operations on encrypted values without decrypting them.`}\n\n`;
+    conceptNum++;
+  }
+  
+  // Only add encryption if actually used
+  if (contractContent.includes('FHE.fromExternal') || testContent.includes('createEncryptedInput')) {
+    sections += `### ${conceptNum}. Off-Chain Encryption\n\n`;
+    sections += `Values are encrypted **locally** (on the client side) before being sent to the contract:\n`;
+    sections += `- Plaintext values never appear in transactions\n`;
+    sections += `- Encryption is cryptographically bound to [contract, user] pair\n`;
+    sections += `- Input proofs verify the binding\n\n`;
+    conceptNum++;
+  }
+  
+  // Only add permissions if actually used
+  if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
+    sections += `### ${conceptNum}. FHE Permissions\n\n`;
+    sections += `Permissions control who can:\n`;
+    sections += `- **Perform operations**: Contracts need \`FHE.allowThis()\`\n`;
+    sections += `- **Decrypt values**: Users need \`FHE.allow()\`\n\n`;
+    conceptNum++;
+  }
+  
+  // Step-by-Step Walkthrough - extract actual function names
+  const functionMatches = contractContent.matchAll(/function\s+(\w+)\s*\([^)]*\)/g);
+  const functionNames: string[] = [];
+  for (const match of functionMatches) {
+    if (!match[1].startsWith('_') && match[1] !== 'constructor') {
+      functionNames.push(match[1]);
+    }
+  }
+  
+  sections += `## Step-by-Step Walkthrough\n\n`;
+  
+  if (functionNames.length > 0 && mainOp) {
+    // Example-specific walkthrough
+    sections += `### Step 1: Set Encrypted Values\n\n`;
+    sections += `Encrypt your values off-chain and send them to the contract using \`${functionNames[0] || 'setValue'}()\`.\n\n`;
+    
+    sections += `### Step 2: Perform ${mainOp} Operation\n\n`;
+    sections += `Call the function that performs \`${mainOp}\` (e.g., \`${functionNames.find(f => f.includes('compute') || f.includes('min') || f.includes('max') || f.includes('result')) || functionNames[1] || 'compute'}()\`).\n\n`;
+    
+    if (testContent.includes('userDecrypt') || testContent.includes('publicDecrypt')) {
+      sections += `### Step 3: Decrypt Result\n\n`;
+      if (testContent.includes('userDecrypt')) {
+        sections += `Use \`userDecrypt\` to retrieve the plaintext result.\n\n`;
+      } else {
+        sections += `Use \`publicDecrypt\` to retrieve the plaintext result.\n\n`;
+      }
+    }
+  } else {
+    // Generic walkthrough only if we can't extract specifics
+    sections += `### Step 1: Setup\n\n`;
+    sections += `Deploy the contract and prepare encrypted inputs.\n\n`;
+    
+    sections += `### Step 2: Execute Operations\n\n`;
+    sections += `Call contract functions with encrypted values and proofs.\n\n`;
+    
+    sections += `### Step 3: Decrypt Results\n\n`;
+    sections += `Use the appropriate decryption method to retrieve plaintext values.\n\n`;
+  }
+  
+  // Common Pitfalls section
+  const pitfalls = extractPitfalls(testContent);
+  if (pitfalls.length > 0) {
+    sections += `## Common Pitfalls\n\n`;
+    pitfalls.slice(0, 3).forEach((pitfall, index) => {
+      sections += `### ❌ Pitfall ${index + 1}: ${pitfall.title}\n\n`;
+      sections += `**The Problem:** ${pitfall.description}\n\n`;
+      sections += `**Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.\n\n`;
+      sections += `**The Fix:** Ensure proper setup, matching signers, and correct permissions.\n\n`;
+    });
+  } else if (contractContent.includes('FHE.fromExternal')) {
+    // Only show generic pitfall if encryption is used
+    sections += `## Common Pitfalls\n\n`;
+    sections += `### ❌ Pitfall: Signer Mismatch\n\n`;
+    sections += `**The Problem:** Using wrong signer for encrypted input.\n\n`;
+    sections += `**Why it fails:** The input proof binds the handle to a specific user address. If the transaction signer doesn't match, verification fails.\n\n`;
+    sections += `**The Fix:** Always match encryption signer with transaction signer:\n\n`;
+    sections += `\`\`\`typescript\n`;
+    sections += `const enc = await fhevm.createEncryptedInput(contractAddress, user.address).encrypt();\n`;
+    sections += `await contract.connect(user).initialize(enc.handles[0], enc.inputProof);\n`;
+    sections += `\`\`\`\n\n`;
+  }
+  
+  // Best Practices section
+  sections += `## Best Practices\n\n`;
+  sections += `1. **Always match encryption signer with transaction signer**\n`;
+  sections += `2. **Grant permissions immediately after creating encrypted values**\n`;
+  sections += `3. **Use descriptive variable names** for clarity\n`;
+  sections += `4. **Validate inputs** before performing operations\n\n`;
+  
+  // Real-World Use Cases - example-specific
+  sections += `## Real-World Use Cases\n\n`;
+  
+  if (mainOp === 'FHE.min' || mainOp === 'FHE.max') {
+    sections += `- **Confidential Rankings**: Find winners/losers without revealing individual scores\n`;
+    sections += `- **Privacy-Preserving Auctions**: Determine highest/lowest bid without revealing amounts\n`;
+    sections += `- **Confidential Comparisons**: Compare encrypted values in business logic\n`;
+  } else if (mainOp === 'FHE.add' || mainOp === 'FHE.mul') {
+    sections += `- **Confidential Accounting**: Sum or multiply encrypted balances\n`;
+    sections += `- **Privacy-Preserving Analytics**: Aggregate encrypted data points\n`;
+    sections += `- **Confidential Calculations**: Perform financial computations on encrypted values\n`;
+  } else if (mainOp === 'FHE.xor' || mainOp === 'FHE.and' || mainOp === 'FHE.or') {
+    sections += `- **Encrypted Flags**: Set/check boolean flags without revealing state\n`;
+    sections += `- **Privacy-Preserving Logic**: Perform bitwise operations on encrypted data\n`;
+  } else if (mainOp === 'FHE.select') {
+    sections += `- **Conditional Transfers**: Transfer based on encrypted conditions\n`;
+    sections += `- **Privacy-Preserving Branching**: Implement if-then-else logic on encrypted values\n`;
+  } else if (config.category.includes('Encryption')) {
+    sections += `- **Confidential Voting**: Encrypt votes before submission\n`;
+    sections += `- **Private Auctions**: Encrypt bids to hide amounts\n`;
+  } else if (config.category.includes('Decryption')) {
+    sections += `- **Confidential Balances**: Users decrypt their own token balances\n`;
+    sections += `- **Private Messages**: Users decrypt messages sent to them\n`;
+  } else if (config.category.includes('ERC7984')) {
+    sections += `- **Confidential Tokens**: Privacy-preserving token transfers\n`;
+    sections += `- **Compliant RWA Tokens**: Real-world asset tokens with compliance features\n`;
+  } else if (config.category.includes('Voting')) {
+    sections += `- **Confidential Governance**: Private voting on proposals\n`;
+    sections += `- **Secret Ballots**: Encrypted votes with public tallies\n`;
+  } else if (config.category.includes('Vesting')) {
+    sections += `- **Token Vesting**: Time-locked token releases\n`;
+    sections += `- **Employee Compensation**: Confidential vesting schedules\n`;
+  } else {
+    sections += `- **Confidential Smart Contracts**: Building privacy-preserving applications\n`;
+    sections += `- **Encrypted Data Processing**: Performing computations on sensitive data\n`;
+  }
+  
+  return sections;
+}
+
+function generateGitBookMarkdown(config: DocsConfig, contractContent: string, testContent: string): string {
+  const contractName = getContractName(contractContent);
+  const description = config.description || extractDescription(contractContent);
+  
+  // Extract chapter tag from test file if not provided in config
+  const chapterTag = config.chapter || extractChapterTag(testContent);
+
+  // Start with title
+  let markdown = `# ${config.title}\n\n`;
+  
+  // Add chapter tag if found (GitBook-compatible comment)
+  if (chapterTag) {
+    markdown += `<!-- chapter: ${chapterTag} -->\n\n`;
+  }
+
+  // Generate comprehensive sections
+  markdown += generateComprehensiveSections(config, contractContent, testContent, contractName);
+
+  // Add hint block
+  markdown += `{% hint style="info" %}\n`;
+  markdown += `To run this example correctly, make sure the files are placed in the following directories:\n\n`;
+  markdown += `- \`.sol\` file → \`<your-project-root-dir>/contracts/\`\n`;
+  markdown += `- \`.ts\` file → \`<your-project-root-dir>/test/\`\n\n`;
+  markdown += `This ensures Hardhat can compile and test your contracts as expected.\n`;
+  markdown += `{% endhint %}\n\n`;
+
+  // Add tabs for contract and test
+  markdown += `{% tabs %}\n\n`;
+
+  // Contract tab
+  markdown += `{% tab title="${contractName}.sol" %}\n\n`;
+  markdown += `\`\`\`solidity\n`;
+  markdown += contractContent;
+  markdown += `\n\`\`\`\n\n`;
+  markdown += `{% endtab %}\n\n`;
+
+  // Test tab
+  const testFileName = path.basename(config.test);
+  markdown += `{% tab title="${testFileName}" %}\n\n`;
+  markdown += `\`\`\`typescript\n`;
+  markdown += testContent;
+  markdown += `\n\`\`\`\n\n`;
+  markdown += `{% endtab %}\n\n`;
+
+  markdown += `{% endtabs %}\n`;
+
+  return markdown;
+}
+
+function updateSummary(exampleName: string, config: DocsConfig): void {
+  const rootDir = path.resolve(__dirname, '..');
+  const summaryPath = path.join(rootDir, 'docs', 'SUMMARY.md');
+
+  if (!fs.existsSync(summaryPath)) {
+    log('Creating new SUMMARY.md', Color.Yellow);
+    const summary = `# FHEVM Examples Documentation\n\n`;
+    const examplesDir = path.dirname(summaryPath);
+    if (!fs.existsSync(examplesDir)) {
+      fs.mkdirSync(examplesDir, { recursive: true });
+    }
+    fs.writeFileSync(summaryPath, summary);
+  }
+
+  const summary = fs.readFileSync(summaryPath, 'utf-8');
+  const outputFileName = path.basename(config.output);
+  const linkText = config.title;
+  const link = `- [${linkText}](${outputFileName})`;
+
+  // Check if already in summary
+  if (summary.includes(outputFileName)) {
+    info('Example already in SUMMARY.md');
+    return;
+  }
+
+  // Add to appropriate category
+  const categoryHeader = `## ${config.category}`;
+  let updatedSummary: string;
+
+  if (summary.includes(categoryHeader)) {
+    // Add under existing category
+    const lines = summary.split('\n');
+    const categoryIndex = lines.findIndex(line => line.trim() === categoryHeader);
+
+    // Find next category or end
+    let insertIndex = categoryIndex + 1;
+    while (insertIndex < lines.length && !lines[insertIndex].startsWith('##')) {
+      if (lines[insertIndex].trim() === '') {
+        break;
+      }
+      insertIndex++;
+    }
+
+    lines.splice(insertIndex, 0, link);
+    updatedSummary = lines.join('\n');
+  } else {
+    // Add new category
+    updatedSummary = summary.trim() + `\n\n${categoryHeader}\n\n${link}\n`;
+  }
+
+  fs.writeFileSync(summaryPath, updatedSummary);
+  success('Updated SUMMARY.md');
+}
+
+function generateDocs(exampleName: string, options: GenerateDocsOptions = {}): void {
+  const config = EXAMPLES_CONFIG[exampleName];
+
+  if (!config) {
+    error(`Unknown example: ${exampleName}\n\nAvailable examples:\n${Object.keys(EXAMPLES_CONFIG).map(k => `  - ${k}`).join('\n')}`);
+  }
+
+  info(`Generating documentation for: ${config.title}`);
+
+  // Read contract and test files
+  const contractContent = readFile(config.contract);
+  const testContent = readFile(config.test);
+  
+  // Extract chapter tag from test if not in config
+  if (!config.chapter) {
+    const extractedChapter = extractChapterTag(testContent);
+    if (extractedChapter) {
+      config.chapter = extractedChapter;
+      info(`Found chapter tag: ${extractedChapter}`);
+    }
+  }
+
+  // Generate GitBook markdown
+  const markdown = generateGitBookMarkdown(config, contractContent, testContent);
+
+  // Write output file
+  const rootDir = path.resolve(__dirname, '..');
+  const outputPath = path.join(rootDir, config.output);
+  const outputDir = path.dirname(outputPath);
+
+  if (!fs.existsSync(outputDir)) {
+    fs.mkdirSync(outputDir, { recursive: true });
+  }
+
+  fs.writeFileSync(outputPath, markdown);
+  success(`Documentation generated: ${config.output}`);
+
+  // Update SUMMARY.md
+  if (!options.noSummary) {
+    updateSummary(exampleName, config);
+  }
+
+  log('\n' + '='.repeat(60), Color.Green);
+  success(`Documentation for "${config.title}" generated successfully!`);
+  log('='.repeat(60), Color.Green);
+}
+
+function generateAllDocs(): void {
+  info('Generating documentation for all examples...\n');
+
+  let successCount = 0;
+  let errorCount = 0;
+
+  for (const exampleName of Object.keys(EXAMPLES_CONFIG)) {
+    try {
+      generateDocs(exampleName, { noSummary: true });
+      successCount++;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      log(`Failed to generate docs for ${exampleName}: ${errorMessage}`, Color.Red);
+      errorCount++;
+    }
+  }
+
+  // Update summary once at the end
+  info('\nUpdating SUMMARY.md...');
+  for (const exampleName of Object.keys(EXAMPLES_CONFIG)) {
+    const config = EXAMPLES_CONFIG[exampleName];
+    updateSummary(exampleName, config);
+  }
+
+  log('\n' + '='.repeat(60), Color.Green);
+  success(`Generated ${successCount} documentation files`);
+  if (errorCount > 0) {
+    log(`Failed: ${errorCount}`, Color.Red);
+  }
+  log('='.repeat(60), Color.Green);
+}
+
+// Main execution
+function main(): void {
+  const args = process.argv.slice(2);
+
+  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    log('FHEVM Documentation Generator', Color.Cyan);
+    log('\nUsage: ts-node scripts/generate-docs.ts <example-name> | --all\n');
+    if (Object.keys(EXAMPLES_CONFIG).length > 0) {
+      log('Available examples:', Color.Yellow);
+      Object.entries(EXAMPLES_CONFIG).forEach(([name, config]) => {
+        log(`  ${name}`, Color.Green);
+        log(`    ${config.title} - ${config.category}`, Color.Reset);
+      });
+    } else {
+      log('No examples configured yet. Add examples to EXAMPLES_CONFIG in this script.', Color.Yellow);
+    }
+    log('\nOptions:', Color.Yellow);
+    log('  --all    Generate documentation for all examples');
+    log('\nExamples:', Color.Yellow);
+    log('  ts-node scripts/generate-docs.ts fhe-counter');
+    log('  ts-node scripts/generate-docs.ts --all\n');
+    process.exit(0);
+  }
+
+  if (args[0] === '--all') {
+    generateAllDocs();
+  } else {
+    generateDocs(args[0]);
+  }
+}
+
+main();
+

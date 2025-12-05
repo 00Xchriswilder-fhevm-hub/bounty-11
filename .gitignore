@@ -1,0 +1,19 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+test-output/
+output/
+coverage/
+.idea/
+.vscode/
+*.tsbuildinfo
+artifacts/
+cache/
+types/
+fhevmTemp/
+
+# Exclude external dependencies
+../openzeppelin-confidential-contracts/
+openzeppelin-confidential-contracts/
+

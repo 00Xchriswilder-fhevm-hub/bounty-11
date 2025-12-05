@@ -1,0 +1,339 @@
+================================================================================
+ALL CREATE COMMANDS - Zama Bounty 11
+================================================================================
+
+This file contains all create-example commands for all 27 examples.
+Commands are grouped into two categories:
+  1. Without --with-docs flag (basic generation)
+  2. With --with-docs flag (includes comprehensive documentation)
+
+================================================================================
+GROUP 1: WITHOUT --with-docs FLAG (Basic Generation)
+================================================================================
+
+# Basic Examples (14)
+npm run create-example fhe-counter ./output/fhe-counter
+npm run create-example encrypt-single-value ./output/encrypt-single-value
+npm run create-example encrypt-multiple-values ./output/encrypt-multiple-values
+npm run create-example user-decrypt-single-value ./output/user-decrypt-single-value
+npm run create-example user-decrypt-multiple-values ./output/user-decrypt-multiple-values
+npm run create-example public-decrypt-single-value ./output/public-decrypt-single-value
+npm run create-example public-decrypt-multiple-values ./output/public-decrypt-multiple-values
+npm run create-example fhe-add ./output/fhe-add
+npm run create-example fhe-if-then-else ./output/fhe-if-then-else
+npm run create-example fhe-min ./output/fhe-min
+npm run create-example fhe-mul ./output/fhe-mul
+npm run create-example fhe-xor ./output/fhe-xor
+npm run create-example fhe-div ./output/fhe-div
+npm run create-example fhe-bitwise ./output/fhe-bitwise
+
+# Access Control Examples (3)
+npm run create-example access-control ./output/access-control
+npm run create-example allow-transient ./output/allow-transient
+npm run create-example permission-examples ./output/permission-examples
+
+# Input Proof Examples (4)
+npm run create-example input-proof-basics ./output/input-proof-basics
+npm run create-example input-proof-usage ./output/input-proof-usage
+npm run create-example input-proof-anti-patterns ./output/input-proof-anti-patterns
+npm run create-example handle-lifecycle ./output/handle-lifecycle
+
+# Anti-Pattern Examples (3)
+npm run create-example view-with-encrypted ./output/view-with-encrypted
+npm run create-example missing-allow-this ./output/missing-allow-this
+npm run create-example handle-misuse ./output/handle-misuse
+
+# OpenZeppelin Examples (9)
+npm run create-example erc7984-example ./output/erc7984-example
+npm run create-example erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper
+npm run create-example vesting-wallet ./output/vesting-wallet
+npm run create-example vesting-wallet-confidential ./output/vesting-wallet-confidential
+npm run create-example vesting-wallet-cliff-confidential ./output/vesting-wallet-cliff-confidential
+npm run create-example confidential-voting ./output/confidential-voting
+npm run create-example erc7984-rwa ./output/erc7984-rwa
+npm run create-example swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20
+npm run create-example swap-erc7984-to-erc7984 ./output/swap-erc7984-to-erc7984
+
+# Advanced Examples (4)
+npm run create-example fhe-legacy-vault ./output/fhe-legacy-vault
+npm run create-example simple-voting ./output/simple-voting
+npm run create-example review-cards-fhe ./output/review-cards-fhe
+npm run create-example blind-auction ./output/blind-auction
+
+================================================================================
+GROUP 2: WITH --with-docs FLAG (Includes Comprehensive Documentation)
+================================================================================
+
+NOTE: When using npm run, you may need to use -- to pass flags:
+      npm run create-example -- <example-name> <output-dir> --with-docs
+      
+      OR use ts-node directly:
+      npx ts-node scripts/create-fhevm-example.ts <example-name> <output-dir> --with-docs
+
+# Basic Examples (14)
+npm run create-example -- fhe-counter ./output/fhe-counter --with-docs
+npm run create-example -- encrypt-single-value ./output/encrypt-single-value --with-docs
+npm run create-example -- encrypt-multiple-values ./output/encrypt-multiple-values --with-docs
+npm run create-example -- user-decrypt-single-value ./output/user-decrypt-single-value --with-docs
+npm run create-example -- user-decrypt-multiple-values ./output/user-decrypt-multiple-values --with-docs
+npm run create-example -- public-decrypt-single-value ./output/public-decrypt-single-value --with-docs
+npm run create-example -- public-decrypt-multiple-values ./output/public-decrypt-multiple-values --with-docs
+npm run create-example -- fhe-add ./output/fhe-add --with-docs
+npm run create-example -- fhe-if-then-else ./output/fhe-if-then-else --with-docs
+npm run create-example -- fhe-min ./output/fhe-min --with-docs
+npm run create-example -- fhe-mul ./output/fhe-mul --with-docs
+npm run create-example -- fhe-xor ./output/fhe-xor --with-docs
+npm run create-example -- fhe-div ./output/fhe-div --with-docs
+npm run create-example -- fhe-bitwise ./output/fhe-bitwise --with-docs
+
+# Access Control Examples (3)
+npm run create-example -- access-control ./output/access-control --with-docs
+npm run create-example -- allow-transient ./output/allow-transient --with-docs
+npm run create-example -- permission-examples ./output/permission-examples --with-docs
+
+# Input Proof Examples (4)
+npm run create-example -- input-proof-basics ./output/input-proof-basics --with-docs
+npm run create-example -- input-proof-usage ./output/input-proof-usage --with-docs
+npm run create-example -- input-proof-anti-patterns ./output/input-proof-anti-patterns --with-docs
+npm run create-example -- handle-lifecycle ./output/handle-lifecycle --with-docs
+
+# Anti-Pattern Examples (3)
+npm run create-example -- view-with-encrypted ./output/view-with-encrypted --with-docs
+npm run create-example -- missing-allow-this ./output/missing-allow-this --with-docs
+npm run create-example -- handle-misuse ./output/handle-misuse --with-docs
+
+# OpenZeppelin Examples (9)
+npm run create-example -- erc7984-example ./output/erc7984-example --with-docs
+npm run create-example -- erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper --with-docs
+npm run create-example -- vesting-wallet ./output/vesting-wallet --with-docs
+npm run create-example -- vesting-wallet-confidential ./output/vesting-wallet-confidential --with-docs
+npm run create-example -- vesting-wallet-cliff-confidential ./output/vesting-wallet-cliff-confidential --with-docs
+npm run create-example -- confidential-voting ./output/confidential-voting --with-docs
+npm run create-example -- erc7984-rwa ./output/erc7984-rwa --with-docs
+npm run create-example -- swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20 --with-docs
+npm run create-example -- swap-erc7984-to-erc7984 ./output/swap-erc7984-to-erc7984 --with-docs
+
+# Advanced Examples (4)
+npm run create-example -- fhe-legacy-vault ./output/fhe-legacy-vault --with-docs
+npm run create-example -- simple-voting ./output/simple-voting --with-docs
+npm run create-example -- review-cards-fhe ./output/review-cards-fhe --with-docs
+npm run create-example -- blind-auction ./output/blind-auction --with-docs
+
+================================================================================
+ALTERNATIVE: Using ts-node directly (Recommended for --with-docs)
+================================================================================
+
+# Basic Examples (14)
+npx ts-node scripts/create-fhevm-example.ts fhe-counter ./output/fhe-counter --with-docs
+npx ts-node scripts/create-fhevm-example.ts encrypt-single-value ./output/encrypt-single-value --with-docs
+npx ts-node scripts/create-fhevm-example.ts encrypt-multiple-values ./output/encrypt-multiple-values --with-docs
+npx ts-node scripts/create-fhevm-example.ts user-decrypt-single-value ./output/user-decrypt-single-value --with-docs
+npx ts-node scripts/create-fhevm-example.ts user-decrypt-multiple-values ./output/user-decrypt-multiple-values --with-docs
+npx ts-node scripts/create-fhevm-example.ts public-decrypt-single-value ./output/public-decrypt-single-value --with-docs
+npx ts-node scripts/create-fhevm-example.ts public-decrypt-multiple-values ./output/public-decrypt-multiple-values --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-add ./output/fhe-add --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-if-then-else ./output/fhe-if-then-else --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-min ./output/fhe-min --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-mul ./output/fhe-mul --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-xor ./output/fhe-xor --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-div ./output/fhe-div --with-docs
+npx ts-node scripts/create-fhevm-example.ts fhe-bitwise ./output/fhe-bitwise --with-docs
+
+# Access Control Examples (3)
+npx ts-node scripts/create-fhevm-example.ts access-control ./output/access-control --with-docs
+npx ts-node scripts/create-fhevm-example.ts allow-transient ./output/allow-transient --with-docs
+npx ts-node scripts/create-fhevm-example.ts permission-examples ./output/permission-examples --with-docs
+
+# Input Proof Examples (4)
+npx ts-node scripts/create-fhevm-example.ts input-proof-basics ./output/input-proof-basics --with-docs
+npx ts-node scripts/create-fhevm-example.ts input-proof-usage ./output/input-proof-usage --with-docs
+npx ts-node scripts/create-fhevm-example.ts input-proof-anti-patterns ./output/input-proof-anti-patterns --with-docs
+npx ts-node scripts/create-fhevm-example.ts handle-lifecycle ./output/handle-lifecycle --with-docs
+
+# Anti-Pattern Examples (3)
+npx ts-node scripts/create-fhevm-example.ts view-with-encrypted ./output/view-with-encrypted --with-docs
+npx ts-node scripts/create-fhevm-example.ts missing-allow-this ./output/missing-allow-this --with-docs
+npx ts-node scripts/create-fhevm-example.ts handle-misuse ./output/handle-misuse --with-docs
+
+# OpenZeppelin Examples (9)
+npx ts-node scripts/create-fhevm-example.ts erc7984-example ./output/erc7984-example --with-docs
+npx ts-node scripts/create-fhevm-example.ts erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper --with-docs
+npx ts-node scripts/create-fhevm-example.ts swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20 --with-docs
+npx ts-node scripts/create-fhevm-example.ts swap-erc7984-to-erc7984 ./output/swap-erc7984-to-erc7984 --with-docs
+npx ts-node scripts/create-fhevm-example.ts vesting-wallet ./output/vesting-wallet --with-docs
+npx ts-node scripts/create-fhevm-example.ts vesting-wallet-confidential ./output/vesting-wallet-confidential --with-docs
+npx ts-node scripts/create-fhevm-example.ts vesting-wallet-cliff-confidential ./output/vesting-wallet-cliff-confidential --with-docs
+npx ts-node scripts/create-fhevm-example.ts confidential-voting ./output/confidential-voting --with-docs
+npx ts-node scripts/create-fhevm-example.ts erc7984-rwa ./output/erc7984-rwa --with-docs
+
+# Advanced Examples (4)
+npx ts-node scripts/create-fhevm-example.ts fhe-legacy-vault ./output/fhe-legacy-vault --with-docs
+npx ts-node scripts/create-fhevm-example.ts simple-voting ./output/simple-voting --with-docs
+npx ts-node scripts/create-fhevm-example.ts review-cards-fhe ./output/review-cards-fhe --with-docs
+npx ts-node scripts/create-fhevm-example.ts blind-auction ./output/blind-auction --with-docs
+
+================================================================================
+SUMMARY
+================================================================================
+
+Total Examples: 30
+
+Group 1 (Without --with-docs): 30 commands
+Group 2 (With --with-docs): 30 commands (using npm run --)
+Alternative (ts-node with --with-docs): 30 commands
+
+Total Commands: 90
+
+================================================================================
+NOTES
+================================================================================
+
+1. Without --with-docs:
+   - Generates basic README.md
+   - Faster generation
+   - Good for quick examples
+
+2. With --with-docs:
+   - Generates comprehensive documentation in docs/ folder
+   - Extracts NatSpec comments (@title, @notice, @dev, @param)
+   - Includes full contract and test code
+   - Includes usage instructions
+   - Better for complete documentation
+
+3. Using npm run:
+   - May need -- to pass flags: npm run create-example -- <args> --with-docs
+   - Or use ts-node directly for better flag handling
+
+4. Output Directory:
+   - Change ./output/ to your desired output path
+   - Example: ./my-examples/ or ../generated-examples/
+
+================================================================================
+CATEGORY GENERATION COMMANDS (create-fhevm-category.ts)
+================================================================================
+
+Generate projects containing multiple examples from a category.
+
+Available Categories:
+- basic (14 examples) - Fundamental FHEVM operations
+- access-control (3 examples) - FHE access control patterns
+- input-proofs (4 examples) - Input proof usage and lifecycle
+- anti-patterns (3 examples) - Common mistakes to avoid
+- openzeppelin (8 examples) - OpenZeppelin confidential contracts
+- advanced (3 examples) - Complex FHEVM applications
+
+# Generate Basic Category (9 contracts)
+npm run create-category basic
+# Default output: ./categories/fhevm-examples-basic
+# OR with custom path:
+npm run create-category basic ./output/basic-examples
+
+# Generate Access Control Category (3 contracts)
+npm run create-category access-control
+# Default output: ./categories/fhevm-examples-access-control
+
+# Generate Input Proofs Category (4 contracts)
+npm run create-category input-proofs
+# Default output: ./categories/fhevm-examples-input-proofs
+
+# Generate Anti-Patterns Category (3 contracts)
+npm run create-category anti-patterns
+# Default output: ./categories/fhevm-examples-anti-patterns
+
+# Generate OpenZeppelin Category (9 contracts)
+npm run create-category openzeppelin
+# Default output: ./categories/fhevm-examples-openzeppelin
+
+# Generate Advanced Category (3 contracts)
+npm run create-category advanced
+# Default output: ./categories/fhevm-examples-advanced
+
+Note: If you don't specify an output directory, it defaults to:
+      ./categories/fhevm-examples-<category-name>
+      
+      Categories are generated in their own folder separate from individual examples
+      which go to ./output/ directory.
+
+================================================================================
+DOCUMENTATION GENERATION COMMANDS (generate-docs.ts)
+================================================================================
+
+Generate GitBook-compatible documentation from code annotations.
+
+# Generate documentation for a single example
+npm run generate-docs fhe-counter
+npm run generate-docs encrypt-single-value
+npm run generate-docs user-decrypt-single-value
+npm run generate-docs access-control
+npm run generate-docs input-proof-basics
+npm run generate-docs view-with-encrypted
+npm run generate-docs erc7984-example
+npm run generate-docs fhe-legacy-vault
+
+# Generate ALL documentation (37 files)
+npm run generate-all-docs
+
+# Show help
+npm run help:docs
+
+================================================================================
+BATCH GENERATION AND TEST COMMANDS (generate-all-examples-and-test.ts)
+================================================================================
+
+Generate all examples with documentation and automatically run tests.
+Perfect for demos - one command instead of copy-pasting!
+
+# Generate all examples with docs and run tests
+npm run generate-all-and-test
+
+# Generate all examples without running tests
+npm run generate-all-and-test -- --skip-test
+
+# Generate examples from specific category only
+npm run generate-all-and-test -- --category basic
+npm run generate-all-and-test -- --category openzeppelin
+npm run generate-all-and-test -- --category advanced
+
+Available categories:
+  - basic (14 examples)
+  - access-control (3 examples)
+  - input-proofs (4 examples)
+  - anti-patterns (3 examples)
+  - openzeppelin (9 examples)
+  - advanced (4 examples)
+
+What it does:
+  1. Generates all examples with --with-docs flag
+  2. Automatically cd into each output folder
+  3. Runs npm test in each folder (no npm install needed)
+  4. Shows summary of successes/failures
+
+================================================================================
+ALL AVAILABLE COMMANDS SUMMARY
+================================================================================
+
+1. Generate Single Example:
+   npm run create-example <example-name> <output-dir>
+   npm run create-example <example-name> <output-dir> --with-docs
+
+2. Generate Category Project:
+   npm run create-category <category> <output-dir>
+
+3. Generate Documentation:
+   npm run generate-docs <example-name>
+   npm run generate-all-docs
+
+4. Generate All Examples and Test (Batch):
+   npm run generate-all-and-test
+   npm run generate-all-and-test -- --skip-test
+   npm run generate-all-and-test -- --category <category>
+
+5. Help Commands:
+   npm run help:create
+   npm run help:category
+   npm run help:docs
+
+================================================================================
+END OF FILE
+================================================================================
+
