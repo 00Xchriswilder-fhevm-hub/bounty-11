@@ -999,7 +999,25 @@ function createExample(exampleName: string, outputDir: string, withDocs: boolean
     fs.unlinkSync(templateContract);
   }
 
-  fs.copyFileSync(contractPath, destContractPath);
+  // Read contract content and fix import paths for dependencies
+  let contractContent = fs.readFileSync(contractPath, 'utf-8');
+  
+  // Fix import paths for openzeppelin contracts when copying to standalone example
+  // Change ../openzeppelin/ to ./ since dependencies are copied to contracts/ root
+  if (example.dependencies) {
+    example.dependencies.forEach(depPath => {
+      if (depPath.startsWith('contracts/openzeppelin/')) {
+        const fileName = path.basename(depPath);
+        // Replace ../openzeppelin/ with ./ for standalone examples
+        contractContent = contractContent.replace(
+          /from\s+["']\.\.\/openzeppelin\/([^"']+)["']/g,
+          `from "./$1"`
+        );
+      }
+    });
+  }
+  
+  fs.writeFileSync(destContractPath, contractContent);
   success(`Contract copied: ${contractName}.sol`);
 
   // Step 3: Copy test

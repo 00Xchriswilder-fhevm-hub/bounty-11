@@ -330,34 +330,33 @@ The **confidential-portfolio-rebalancer** is one of the most complex examples, d
 
 ```
   ConfidentialPortfolioRebalancer
-    ✔ Deployment
-      ✓ should set the right owner
-      ✓ should set the right rebalancing threshold
-      ✓ should have zero token count initially
+    ✅ Deployment
+      ✔ should set the right owner
+      ✔ should set the right rebalancing threshold
+      ✔ should have zero token count initially
+    ✅ Token Management
+      ✔ should allow owner to add tokens
+      ✔ should allow adding multiple tokens
+      ✔ should allow owner to remove token
+      ✔ should allow updating rebalancing threshold
+    ❌ Token Management Error Cases
+      ✔ should fail when non-owner tries to add token
+      ✔ should fail when adding duplicate token
+    ✅ Deposits and Withdrawals
+      ✔ should allow depositing tokens to portfolio (45ms)
+      ✔ should allow withdrawing tokens from portfolio (68ms)
+    ❌ Deposits and Withdrawals Error Cases
+      ✔ should fail when withdrawing more than balance (46ms)
+    ✅ Portfolio Calculations
+      ✔ should calculate total portfolio value (63ms)
+      ✔ should calculate target amount for token
+    ✅ Rebalancing
+      ✔ should detect when rebalancing is needed (64ms)
+      ✔ should execute rebalancing when needed
+    ❌ Rebalancing Error Cases
+      ✔ should fail when rebalancing is not needed
 
-    ✔ Token Management
-      ✓ should allow owner to add tokens
-      ✓ should fail when non-owner tries to add token
-      ✓ should fail when adding duplicate token
-      ✓ should allow adding multiple tokens
-      ✓ should allow owner to remove token
-      ✓ should allow updating rebalancing threshold
-
-    ✔ Deposits and Withdrawals
-      ✓ should allow depositing tokens to portfolio (44ms)
-      ✓ should allow withdrawing tokens from portfolio (49ms)
-      ✓ should fail when withdrawing more than balance (44ms)
-
-    ✔ Portfolio Calculations
-      ✓ should calculate total portfolio value (66ms)
-      ✓ should calculate target amount for token
-
-    ✔ Rebalancing
-      ✓ should detect when rebalancing is needed (73ms)
-      ✓ should execute rebalancing when needed (41ms)
-      ✓ should fail when rebalancing is not needed
-
-  17 passing (909ms)
+  17 passing
 ```
 
 **Key Complexity Indicators:**
