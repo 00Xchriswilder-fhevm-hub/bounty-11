@@ -130,20 +130,6 @@ describe("ConfidentialPortfolioRebalancer", function () {
       expect(isActive).to.be.true;
     });
 
-    it("should fail when non-owner tries to add token", async function () {
-      await expect(
-        (portfolio.connect(signers.alice) as any).addToken(tokenA, 4000)
-      ).to.be.revertedWithCustomError(portfolio, "Unauthorized");
-    });
-
-    it("should fail when adding duplicate token", async function () {
-      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000);
-
-      await expect(
-        (portfolio.connect(signers.deployer) as any).addToken(tokenA, 3000)
-      ).to.be.revertedWithCustomError(portfolio, "TokenAlreadyExists");
-    });
-
     it("should allow adding multiple tokens", async function () {
       await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000); // 40%
       await (portfolio.connect(signers.deployer) as any).addToken(tokenB, 3000); // 30%
@@ -172,6 +158,22 @@ describe("ConfidentialPortfolioRebalancer", function () {
         .withArgs(500, newThreshold);
 
       expect(await portfolio.rebalancingThreshold()).to.equal(newThreshold);
+    });
+  });
+
+  describe("❌ Token Management Error Cases", function () {
+    it("should fail when non-owner tries to add token", async function () {
+      await expect(
+        (portfolio.connect(signers.alice) as any).addToken(tokenA, 4000)
+      ).to.be.revertedWithCustomError(portfolio, "Unauthorized");
+    });
+
+    it("should fail when adding duplicate token", async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000);
+
+      await expect(
+        (portfolio.connect(signers.deployer) as any).addToken(tokenA, 3000)
+      ).to.be.revertedWithCustomError(portfolio, "TokenAlreadyExists");
     });
   });
 
@@ -274,6 +276,12 @@ describe("ConfidentialPortfolioRebalancer", function () {
       // Check balance is not zero (still has remaining)
       const encryptedBalance = await portfolio.getTokenBalance(0);
       expect(encryptedBalance).to.not.eq(ethers.ZeroHash);
+    });
+  });
+
+  describe("❌ Deposits and Withdrawals Error Cases", function () {
+    beforeEach(async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 10000); // 100%
     });
 
     it("should fail when withdrawing more than balance", async function () {
@@ -562,6 +570,12 @@ describe("ConfidentialPortfolioRebalancer", function () {
       // Balance should be reduced (check it's not zero)
       const encryptedBalance = await portfolio.getTokenBalance(0);
       expect(encryptedBalance).to.not.eq(ethers.ZeroHash);
+    });
+  });
+
+  describe("❌ Rebalancing Error Cases", function () {
+    beforeEach(async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 10000); // 100%
     });
 
     it("should fail when rebalancing is not needed", async function () {
