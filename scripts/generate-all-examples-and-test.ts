@@ -99,6 +99,7 @@ const EXAMPLES_BY_CATEGORY: Record<string, ExampleConfig[]> = {
     { name: 'vesting-wallet-cliff-confidential', category: 'openzeppelin' },
     { name: 'confidential-voting', category: 'openzeppelin' },
     { name: 'erc7984-rwa', category: 'openzeppelin' },
+    { name: 'erc7984-omnibus', category: 'openzeppelin' },
     { name: 'swap-erc7984-to-erc20', category: 'openzeppelin' },
     { name: 'swap-erc7984-to-erc7984', category: 'openzeppelin' },
   ],

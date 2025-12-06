@@ -10,10 +10,10 @@
 
 This project delivers a complete solution for the Zama Bounty Season 11 challenge: **"Build The FHEVM Example Hub"**. It provides:
 
-- ✅ **37 Standalone Example Contracts** covering all required categories
-- ✅ **37 Comprehensive Test Suites** with success and failure cases
+- ✅ **38 Standalone Example Contracts** covering all required categories
+- ✅ **38 Comprehensive Test Suites** with success and failure cases
 - ✅ **6 Automation Scripts** for scaffolding, documentation generation, batch operations, and maintenance
-- ✅ **37 Auto-Generated Documentation Files** in GitBook format
+- ✅ **38 Auto-Generated Documentation Files** in GitBook format
 - ✅ **6 Category Projects** for generating multi-example repositories
 - ✅ **Base Template Integration** using the official FHEVM Hardhat template
 - ✅ **Factory Pattern Implementation** for OpenZeppelin vesting wallets (production-ready)
@@ -22,12 +22,12 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 37 | ✅ Complete |
-| **Tests** | 37 | ✅ Complete |
-| **Documentation** | 37 | ✅ Complete |
+| **Contracts** | 38 | ✅ Complete |
+| **Tests** | 38 | ✅ Complete |
+| **Documentation** | 38 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
-| **OpenZeppelin Examples** | 9 | ✅ Complete |
+| **OpenZeppelin Examples** | 10 | ✅ Complete |
 
 ## 🚀 Quick Start
 
@@ -80,7 +80,7 @@ npm run create-category basic ./my-custom-path/basic-examples
 # - access-control (3 examples)
 # - input-proofs (4 examples)
 # - anti-patterns (3 examples)
-# - openzeppelin (9 examples)
+# - openzeppelin (10 examples)
 # - advanced (4 examples)
 ```
 
@@ -111,7 +111,7 @@ npm run generate-all-and-test -- --category openzeppelin
 ```
 
 **What it does:**
-- Generates all 37 examples with `--with-docs` flag
+- Generates all 38 examples with `--with-docs` flag
 - Automatically changes directory into each output folder
 - Runs `npm test` in each folder (no `npm install` needed)
 - Shows summary of successes/failures
@@ -121,7 +121,7 @@ npm run generate-all-and-test -- --category openzeppelin
 - `access-control` (3 examples)
 - `input-proofs` (4 examples)
 - `anti-patterns` (3 examples)
-- `openzeppelin` (9 examples)
+- `openzeppelin` (10 examples)
 - `advanced` (4 examples)
 
 ### 🎨 FHEVM Studio (Interactive CLI)
@@ -207,7 +207,7 @@ zama-bounty-11/
 │   ├── access-control/         # 3 access control examples
 │   ├── input-proofs/           # 4 input proof examples
 │   ├── anti-patterns/          # 3 anti-pattern examples
-│   ├── openzeppelin/           # 9 OpenZeppelin examples
+│   ├── openzeppelin/           # 10 OpenZeppelin examples
 │   │   ├── ERC7984Mock.sol
 │   │   ├── ERC7984ToERC20Wrapper.sol
 │   │   ├── SwapERC7984ToERC20.sol
@@ -222,7 +222,7 @@ zama-bounty-11/
 │   ├── access-control/         # 3 test files
 │   ├── input-proofs/           # 4 test files
 │   ├── anti-patterns/          # 3 test files
-│   ├── openzeppelin/           # 9 test files
+│   ├── openzeppelin/           # 10 test files
 │   │   ├── ERC7984Example.ts
 │   │   ├── ERC7984ToERC20Wrapper.ts
 │   │   ├── SwapERC7984ToERC20.ts
@@ -247,9 +247,8 @@ zama-bounty-11/
 │   ├── fhevm-studio.ts        # Interactive CLI tool
 │   ├── generate-all-examples-and-test.ts # Batch generation and testing
 │   └── update-dependencies.ts  # Dependency management tool
-├── examples/                   # 27 auto-generated docs
+├── docs/                       # 38 auto-generated docs
 │   └── SUMMARY.md              # Documentation index
-├── docs/                       # Developer guides
 ├── hardhat.config.ts           # Hardhat configuration
 └── README.md                   # This file
 ```
@@ -292,7 +291,7 @@ zama-bounty-11/
 2. **missing-allow-this** - Missing FHE.allowThis() permission
 3. **handle-misuse** - Incorrect handle usage
 
-### OpenZeppelin Examples (9)
+### OpenZeppelin Examples (10)
 
 1. **erc7984-example** - Basic ERC7984 confidential token implementation
 2. **erc7984-to-erc20-wrapper** - Wrapping ERC20 to ERC7984 confidential tokens
@@ -303,6 +302,7 @@ zama-bounty-11/
 7. **vesting-wallet-cliff-confidential** - OpenZeppelin VestingWalletCliffConfidential with cliff period using factory pattern (production-ready)
 8. **confidential-voting** - ERC7984Votes for confidential governance voting with delegation
 9. **erc7984-rwa** - ERC7984 RWA (Real World Assets) with compliance features (pause, freeze, block users, force transfers)
+10. **erc7984-omnibus** - ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses
 
 ### Advanced Examples (4)
 
@@ -363,7 +363,7 @@ npm run create-category <category-name> <output-dir>
 - `access-control` - 3 access control examples (FHE.allow, FHE.allowThis, FHE.allowTransient)
 - `input-proofs` - 4 input proof examples (basics, usage, anti-patterns, handles)
 - `anti-patterns` - 3 anti-pattern examples (common mistakes to avoid)
-- `openzeppelin` - 9 OpenZeppelin examples (ERC7984, wrappers, swaps, vesting, voting, RWA)
+- `openzeppelin` - 10 OpenZeppelin examples (ERC7984, wrappers, swaps, vesting, voting, RWA, omnibus)
 - `advanced` - 4 advanced examples (vault, voting, rating, blind auction)
 
 **Example:**
@@ -411,7 +411,7 @@ npm run generate-all-and-test -- --category basic
 ```
 
 **Features:**
-- ✅ Generates all 37 examples with `--with-docs` flag
+- ✅ Generates all 38 examples with `--with-docs` flag
 - ✅ Automatically changes directory into each output folder
 - ✅ Runs `npm test` in each folder (no `npm install` needed)
 - ✅ Shows summary of successes/failures
@@ -489,7 +489,7 @@ npm run update-dependencies -- --package @fhevm/solidity ^0.9.1 --base-template
      description: 'Description',
      contract: 'contracts/category/ContractName.sol',
      test: 'test/category/ContractName.ts',
-     output: 'examples/example-name.md',
+     output: 'docs/example-name.md',
      category: 'Category',
    },
    ```
@@ -531,9 +531,9 @@ npm run update-dependencies -- --package <package-name> <version> --all --base-t
 ```
 zama-bounty-11/
 ├── scripts/              # Automation scripts
-├── contracts/            # Example contracts (37)
-├── test/                 # Test files (37)
-├── docs/                 # Generated documentation (37)
+├── contracts/            # Example contracts (38)
+├── test/                 # Test files (38)
+├── docs/                 # Generated documentation (38)
 ├── fhevm-hardhat-template/  # Base Hardhat template (inside project)
 ├── output/               # Generated standalone examples
 ├── categories/           # Generated category projects
@@ -556,7 +556,7 @@ zama-bounty-11/
 - ✅ **Access Control**: 3 examples demonstrating FHE.allow, FHE.allowThis, FHE.allowTransient
 - ✅ **Input Proofs**: 4 examples explaining input proofs and handles
 - ✅ **Anti-Patterns**: 3 examples showing common mistakes
-- ✅ **OpenZeppelin**: 9 examples using OpenZeppelin confidential contracts
+- ✅ **OpenZeppelin**: 10 examples using OpenZeppelin confidential contracts
   - Includes factory-based vesting wallets using clone pattern (production-ready)
   - Includes confidential voting with ERC7984Votes and delegation
   - Includes RWA (Real World Assets) with compliance features (pause, freeze, block, force transfer)
@@ -597,9 +597,9 @@ npx hardhat test test/basic/FHECounter.ts
 
 All documentation is auto-generated from code annotations:
 
-- **Location**: `examples/` directory
+- **Location**: `docs/` directory
 - **Format**: GitBook-compatible markdown
-- **Index**: `examples/SUMMARY.md`
+- **Index**: `docs/SUMMARY.md`
 - **Content**: Contract code, test code, explanations
 
 **View Documentation:**
@@ -607,8 +607,8 @@ All documentation is auto-generated from code annotations:
 # Generate all docs
 npm run generate-all-docs
 
-# View in examples/ directory
-cat examples/SUMMARY.md
+# View in docs/ directory
+cat docs/SUMMARY.md
 ```
 
 ## 🎓 Key FHEVM Concepts Demonstrated
@@ -677,10 +677,10 @@ The base template is cloned, so dependencies are managed per generated repositor
 
 ## 🎯 Key Achievements
 
-1. **29 Contracts Created** - All required categories covered
-2. **30 Test Suites** - Comprehensive coverage with success/failure cases
+1. **38 Contracts Created** - All required categories covered
+2. **38 Test Suites** - Comprehensive coverage with success/failure cases
 3. **6 Automation Scripts** - Fully functional scaffolding, batch generation, and maintenance tools
-4. **29 Documentation Files** - Auto-generated GitBook-compatible docs
+4. **38 Documentation Files** - Auto-generated GitBook-compatible docs
 5. **100% Compilation Success** - All contracts compile without errors
 6. **Educational Value** - Well-commented code explaining FHEVM concepts
 7. **Production-Ready Patterns** - Factory-based vesting wallets using OpenZeppelin's recommended clone pattern
@@ -760,12 +760,12 @@ BSD-3-Clause-Clear License
 
 **Overall Progress**: 100% ✅
 
-- ✅ Contracts: 37/37 (100%)
-- ✅ Tests: 37/37 (100%)
-- ✅ Documentation: 37/37 (100%)
+- ✅ Contracts: 38/38 (100%)
+- ✅ Tests: 38/38 (100%)
+- ✅ Documentation: 38/38 (100%)
 - ✅ Automation: 6/6 (100%)
 - ✅ Compilation: All contracts compile successfully
-- ✅ OpenZeppelin Examples: 9/9 (including factory-based vesting wallets, confidential voting, and RWA)
+- ✅ OpenZeppelin Examples: 10/10 (including factory-based vesting wallets, confidential voting, RWA, and omnibus)
 - ✅ Production Patterns: Factory-based clone pattern implemented
 - ✅ Category Projects: 6 categories ready for generation
 

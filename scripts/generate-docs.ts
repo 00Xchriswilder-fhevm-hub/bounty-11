@@ -317,6 +317,14 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     output: 'docs/erc7984-rwa.md',
     category: 'OpenZeppelin',
   },
+  'erc7984-omnibus': {
+    title: 'ERC7984 Omnibus',
+    description: 'Demonstrates ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses. This example shows how to implement the omnibus pattern where multiple sub-accounts are tracked off-chain, while onchain settlement occurs between omnibus accounts. Sub-account sender and recipient addresses are encrypted in events for privacy, and ACL permissions are automatically granted to omnibus accounts.',
+    contract: 'contracts/openzeppelin/ERC7984OmnibusMock.sol',
+    test: 'test/openzeppelin/ERC7984OmnibusExample.ts',
+    output: 'docs/erc7984-omnibus.md',
+    category: 'OpenZeppelin',
+  },
   'confidential-voting': {
     title: 'Confidential Voting',
     description: 'OpenZeppelin ERC7984Votes for confidential governance. Demonstrates voting power tracking, delegation, and historical vote queries.',
@@ -466,6 +474,13 @@ function extractKeyConcepts(contractContent: string, testContent: string, config
     concepts.push('**Confidential tokens** - Working with encrypted token balances and transfers');
   }
   
+  // Omnibus-specific concepts
+  if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+    concepts.push('**Omnibus pattern** - Onchain settlement between omnibus accounts with off-chain sub-account tracking');
+    concepts.push('**Encrypted addresses** - Encrypting sub-account sender and recipient addresses for privacy');
+    concepts.push('**OmnibusConfidentialTransfer events** - Event emission with encrypted addresses for off-chain tracking');
+  }
+  
   if (config.category.includes('Voting')) {
     concepts.push('**Confidential voting** - Encrypted votes and private tallies');
   }
@@ -596,6 +611,28 @@ function generateComprehensiveSections(
     conceptNum++;
   }
   
+  // Omnibus-specific concepts
+  if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+    sections += `### ${conceptNum}. Omnibus Pattern\n\n`;
+    sections += `The omnibus pattern is useful for exchanges, custodians, or intermediaries where:\n`;
+    sections += `- **Multiple sub-accounts** are tracked off-chain (not stored on-chain)\n`;
+    sections += `- **Onchain settlement** occurs between omnibus accounts (omnibusFrom, omnibusTo)\n`;
+    sections += `- **Sub-account addresses** (sender/recipient) are encrypted in events for privacy\n`;
+    sections += `- **Omnibus accounts** (omnibusFrom/omnibusTo) are public addresses\n`;
+    sections += `- **ACL permissions** are automatically granted to omnibus accounts\n`;
+    sections += `- **Events** (OmnibusConfidentialTransfer) allow off-chain tracking of sub-account balances\n\n`;
+    conceptNum++;
+    
+    sections += `### ${conceptNum}. Encrypted Addresses in Omnibus Transfers\n\n`;
+    sections += `In omnibus transfers, both the amount and the sub-account addresses are encrypted:\n`;
+    sections += `- **Encrypted sender address**: The sub-account sending tokens (encrypted for privacy)\n`;
+    sections += `- **Encrypted recipient address**: The sub-account receiving tokens (encrypted for privacy)\n`;
+    sections += `- **Encrypted amount**: The amount being transferred (standard FHE encryption)\n`;
+    sections += `- All three values are created in a single encrypted input and share the same input proof\n`;
+    sections += `- The \`OmnibusConfidentialTransfer\` event contains these encrypted addresses for off-chain tracking\n\n`;
+    conceptNum++;
+  }
+  
   // Step-by-Step Walkthrough - extract actual function names
   const functionMatches = contractContent.matchAll(/function\s+(\w+)\s*\([^)]*\)/g);
   const functionNames: string[] = [];
@@ -607,7 +644,29 @@ function generateComprehensiveSections(
   
   sections += `## Step-by-Step Walkthrough\n\n`;
   
-  if (functionNames.length > 0 && mainOp) {
+  // Omnibus-specific walkthrough
+  if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+    sections += `### Step 1: Mint Tokens to Omnibus Account\n\n`;
+    sections += `First, mint tokens to the omnibus account (omnibusFrom) that will handle the transfers. Use \`$_mint()\` to mint tokens to the omnibus account.\n\n`;
+    
+    sections += `### Step 2: Create Encrypted Values for Omnibus Transfer\n\n`;
+    sections += `Create all encrypted values in a single encrypted input:\n`;
+    sections += `- Encrypt the sender sub-account address using \`.addAddress(senderAddress)\`\n`;
+    sections += `- Encrypt the recipient sub-account address using \`.addAddress(recipientAddress)\`\n`;
+    sections += `- Encrypt the transfer amount using \`.add64(amount)\`\n`;
+    sections += `- All three values share the same input proof when created together\n\n`;
+    
+    sections += `### Step 3: Perform Omnibus Transfer\n\n`;
+    sections += `Call \`confidentialTransferOmnibus()\` or \`confidentialTransferFromOmnibus()\` with:\n`;
+    sections += `- The omnibusTo address (public address)\n`;
+    sections += `- The encrypted sender address (first handle)\n`;
+    sections += `- The encrypted recipient address (second handle)\n`;
+    sections += `- The encrypted amount (third handle)\n`;
+    sections += `- The shared input proof\n\n`;
+    
+    sections += `### Step 4: Track Sub-Account Balances Off-Chain\n\n`;
+    sections += `Listen for \`OmnibusConfidentialTransfer\` events to track sub-account balances off-chain. The event contains encrypted addresses and amounts for your accounting system.\n\n`;
+  } else if (functionNames.length > 0 && mainOp) {
     // Example-specific walkthrough
     sections += `### Step 1: Set Encrypted Values\n\n`;
     sections += `Encrypt your values off-chain and send them to the contract using \`${functionNames[0] || 'setValue'}()\`.\n\n`;
@@ -688,6 +747,11 @@ function generateComprehensiveSections(
   } else if (config.category.includes('Decryption')) {
     sections += `- **Confidential Balances**: Users decrypt their own token balances\n`;
     sections += `- **Private Messages**: Users decrypt messages sent to them\n`;
+  } else if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+    sections += `- **Exchange Custody**: Exchanges can track user balances off-chain while settling on-chain between omnibus accounts\n`;
+    sections += `- **Custodial Services**: Custodians can manage multiple client accounts privately with encrypted sub-account tracking\n`;
+    sections += `- **Intermediary Services**: Payment processors can handle transfers between sub-accounts without revealing individual account details\n`;
+    sections += `- **Privacy-Preserving Ledgers**: Maintain confidential sub-account balances while providing on-chain settlement guarantees\n`;
   } else if (config.category.includes('ERC7984')) {
     sections += `- **Confidential Tokens**: Privacy-preserving token transfers\n`;
     sections += `- **Compliant RWA Tokens**: Real-world asset tokens with compliance features\n`;

@@ -270,6 +270,15 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
       '@openzeppelin/confidential-contracts/utils/HandleAccessManager.sol'
     ],
   },
+  'erc7984-omnibus': {
+    contract: 'contracts/openzeppelin/ERC7984OmnibusMock.sol',
+    test: 'test/openzeppelin/ERC7984OmnibusExample.ts',
+    description: 'Demonstrates ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses',
+    category: 'openzeppelin',
+    dependencies: [
+      '@openzeppelin/confidential-contracts/token/ERC7984/extensions/ERC7984Omnibus.sol'
+    ],
+  },
   'vesting-wallet': {
     contract: 'contracts/openzeppelin/VestingWallet.sol',
     test: 'test/openzeppelin/VestingWallet.ts',

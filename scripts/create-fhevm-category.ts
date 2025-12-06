@@ -119,6 +119,7 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/openzeppelin/VestingWalletCliffConfidentialFactoryMock.sol', test: 'test/openzeppelin/VestingWalletCliffConfidential.ts', additionalFiles: ['contracts/openzeppelin/VestingWalletCliffConfidential.sol'] },
       { path: 'contracts/openzeppelin/ERC7984VotesMock.sol', test: 'test/openzeppelin/ERC7984VotesExample.ts' },
       { path: 'contracts/openzeppelin/ERC7984RwaMock.sol', test: 'test/openzeppelin/ERC7984RwaExample.ts' },
+      { path: 'contracts/openzeppelin/ERC7984OmnibusMock.sol', test: 'test/openzeppelin/ERC7984OmnibusExample.ts' },
     ],
     additionalDeps: {
       '@openzeppelin/confidential-contracts': '^0.3.0',
