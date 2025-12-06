@@ -163,22 +163,22 @@ describe("ERC7984OmnibusMock", function () {
       
       // First, create encrypted values using contract functions
       // Use staticCall to get return values without sending transactions
-      const encryptedAmountTx = contract
-        .connect(signers.omnibusFrom)
+      const encryptedAmountTx = (contract
+        .connect(signers.omnibusFrom) as any)
         .createEncryptedAmount.staticCall(transferAmount);
       
-      const encryptedSenderTx = contract
-        .connect(signers.omnibusFrom)
+      const encryptedSenderTx = (contract
+        .connect(signers.omnibusFrom) as any)
         .createEncryptedAddress.staticCall(await signers.alice.getAddress());
       
-      const encryptedRecipientTx = contract
-        .connect(signers.omnibusFrom)
+      const encryptedRecipientTx = (contract
+        .connect(signers.omnibusFrom) as any)
         .createEncryptedAddress.staticCall(await signers.bob.getAddress());
 
       // Execute the transactions to create the encrypted values
-      await contract.connect(signers.omnibusFrom).createEncryptedAmount(transferAmount);
-      await contract.connect(signers.omnibusFrom).createEncryptedAddress(await signers.alice.getAddress());
-      await contract.connect(signers.omnibusFrom).createEncryptedAddress(await signers.bob.getAddress());
+      await (contract.connect(signers.omnibusFrom) as any).createEncryptedAmount(transferAmount);
+      await (contract.connect(signers.omnibusFrom) as any).createEncryptedAddress(await signers.alice.getAddress());
+      await (contract.connect(signers.omnibusFrom) as any).createEncryptedAddress(await signers.bob.getAddress());
 
       // Get the return values from static calls
       const encryptedAmount = await encryptedAmountTx;

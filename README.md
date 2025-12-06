@@ -215,7 +215,8 @@ zama-bounty-11/
 │   │   ├── VestingWallet.sol
 │   │   ├── VestingWalletConfidentialFactoryMock.sol (factory pattern)
 │   │   ├── VestingWalletCliffConfidentialFactoryMock.sol (factory pattern)
-│   │   └── ERC7984VotesMock.sol (confidential voting)
+│   │   ├── ERC7984VotesMock.sol (confidential voting)
+│   │   └── ERC7984OmnibusMock.sol (omnibus pattern)
 │   └── advanced/               # 4 advanced examples
 ├── test/                       # 32 comprehensive test files
 │   ├── basic/                  # 9 test files
@@ -231,7 +232,8 @@ zama-bounty-11/
 │   │   ├── VestingWalletConfidential.ts (factory pattern)
 │   │   ├── VestingWalletCliffConfidential.ts (factory pattern)
 │   │   ├── ERC7984VotesExample.ts (confidential voting)
-│   │   └── ERC7984RwaExample.ts (Real World Assets)
+│   │   ├── ERC7984RwaExample.ts (Real World Assets)
+│   │   └── ERC7984OmnibusExample.ts (omnibus pattern)
 │   └── advanced/                # 4 test files
 ├── categories/                 # Generated category projects
 │   ├── fhevm-examples-basic/
