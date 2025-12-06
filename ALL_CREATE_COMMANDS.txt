@@ -2,7 +2,7 @@
 ALL CREATE COMMANDS - Zama Bounty 11
 ================================================================================
 
-This file contains all create-example commands for all 27 examples.
+This file contains all create-example commands for all 39 examples.
 Commands are grouped into two categories:
   1. Without --with-docs flag (basic generation)
   2. With --with-docs flag (includes comprehensive documentation)
@@ -43,7 +43,7 @@ npm run create-example view-with-encrypted ./output/view-with-encrypted
 npm run create-example missing-allow-this ./output/missing-allow-this
 npm run create-example handle-misuse ./output/handle-misuse
 
-# OpenZeppelin Examples (9)
+# OpenZeppelin Examples (10)
 npm run create-example erc7984-example ./output/erc7984-example
 npm run create-example erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper
 npm run create-example vesting-wallet ./output/vesting-wallet
@@ -53,12 +53,14 @@ npm run create-example confidential-voting ./output/confidential-voting
 npm run create-example erc7984-rwa ./output/erc7984-rwa
 npm run create-example swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20
 npm run create-example swap-erc7984-to-erc7984 ./output/swap-erc7984-to-erc7984
+npm run create-example erc7984-omnibus ./output/erc7984-omnibus
 
-# Advanced Examples (4)
+# Advanced Examples (5)
 npm run create-example fhe-legacy-vault ./output/fhe-legacy-vault
 npm run create-example simple-voting ./output/simple-voting
 npm run create-example review-cards-fhe ./output/review-cards-fhe
 npm run create-example blind-auction ./output/blind-auction
+npm run create-example confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer
 
 ================================================================================
 GROUP 2: WITH --with-docs FLAG (Includes Comprehensive Documentation)
@@ -102,7 +104,7 @@ npm run create-example -- view-with-encrypted ./output/view-with-encrypted --wit
 npm run create-example -- missing-allow-this ./output/missing-allow-this --with-docs
 npm run create-example -- handle-misuse ./output/handle-misuse --with-docs
 
-# OpenZeppelin Examples (9)
+# OpenZeppelin Examples (10)
 npm run create-example -- erc7984-example ./output/erc7984-example --with-docs
 npm run create-example -- erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper --with-docs
 npm run create-example -- vesting-wallet ./output/vesting-wallet --with-docs
@@ -112,12 +114,14 @@ npm run create-example -- confidential-voting ./output/confidential-voting --wit
 npm run create-example -- erc7984-rwa ./output/erc7984-rwa --with-docs
 npm run create-example -- swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20 --with-docs
 npm run create-example -- swap-erc7984-to-erc7984 ./output/swap-erc7984-to-erc7984 --with-docs
+npm run create-example -- erc7984-omnibus ./output/erc7984-omnibus --with-docs
 
-# Advanced Examples (4)
+# Advanced Examples (5)
 npm run create-example -- fhe-legacy-vault ./output/fhe-legacy-vault --with-docs
 npm run create-example -- simple-voting ./output/simple-voting --with-docs
 npm run create-example -- review-cards-fhe ./output/review-cards-fhe --with-docs
 npm run create-example -- blind-auction ./output/blind-auction --with-docs
+npm run create-example -- confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer --with-docs
 
 ================================================================================
 ALTERNATIVE: Using ts-node directly (Recommended for --with-docs)
@@ -155,7 +159,7 @@ npx ts-node scripts/create-fhevm-example.ts view-with-encrypted ./output/view-wi
 npx ts-node scripts/create-fhevm-example.ts missing-allow-this ./output/missing-allow-this --with-docs
 npx ts-node scripts/create-fhevm-example.ts handle-misuse ./output/handle-misuse --with-docs
 
-# OpenZeppelin Examples (9)
+# OpenZeppelin Examples (10)
 npx ts-node scripts/create-fhevm-example.ts erc7984-example ./output/erc7984-example --with-docs
 npx ts-node scripts/create-fhevm-example.ts erc7984-to-erc20-wrapper ./output/erc7984-to-erc20-wrapper --with-docs
 npx ts-node scripts/create-fhevm-example.ts swap-erc7984-to-erc20 ./output/swap-erc7984-to-erc20 --with-docs
@@ -165,24 +169,26 @@ npx ts-node scripts/create-fhevm-example.ts vesting-wallet-confidential ./output
 npx ts-node scripts/create-fhevm-example.ts vesting-wallet-cliff-confidential ./output/vesting-wallet-cliff-confidential --with-docs
 npx ts-node scripts/create-fhevm-example.ts confidential-voting ./output/confidential-voting --with-docs
 npx ts-node scripts/create-fhevm-example.ts erc7984-rwa ./output/erc7984-rwa --with-docs
+npx ts-node scripts/create-fhevm-example.ts erc7984-omnibus ./output/erc7984-omnibus --with-docs
 
-# Advanced Examples (4)
+# Advanced Examples (5)
 npx ts-node scripts/create-fhevm-example.ts fhe-legacy-vault ./output/fhe-legacy-vault --with-docs
 npx ts-node scripts/create-fhevm-example.ts simple-voting ./output/simple-voting --with-docs
 npx ts-node scripts/create-fhevm-example.ts review-cards-fhe ./output/review-cards-fhe --with-docs
 npx ts-node scripts/create-fhevm-example.ts blind-auction ./output/blind-auction --with-docs
+npx ts-node scripts/create-fhevm-example.ts confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer --with-docs
 
 ================================================================================
 SUMMARY
 ================================================================================
 
-Total Examples: 30
+Total Examples: 39
 
-Group 1 (Without --with-docs): 30 commands
-Group 2 (With --with-docs): 30 commands (using npm run --)
-Alternative (ts-node with --with-docs): 30 commands
+Group 1 (Without --with-docs): 39 commands
+Group 2 (With --with-docs): 39 commands (using npm run --)
+Alternative (ts-node with --with-docs): 39 commands
 
-Total Commands: 90
+Total Commands: 117
 
 ================================================================================
 NOTES
@@ -219,8 +225,8 @@ Available Categories:
 - access-control (3 examples) - FHE access control patterns
 - input-proofs (4 examples) - Input proof usage and lifecycle
 - anti-patterns (3 examples) - Common mistakes to avoid
-- openzeppelin (8 examples) - OpenZeppelin confidential contracts
-- advanced (3 examples) - Complex FHEVM applications
+- openzeppelin (10 examples) - OpenZeppelin confidential contracts
+- advanced (5 examples) - Complex FHEVM applications
 
 # Generate Basic Category (9 contracts)
 npm run create-category basic
@@ -240,11 +246,11 @@ npm run create-category input-proofs
 npm run create-category anti-patterns
 # Default output: ./categories/fhevm-examples-anti-patterns
 
-# Generate OpenZeppelin Category (9 contracts)
+# Generate OpenZeppelin Category (10 contracts)
 npm run create-category openzeppelin
 # Default output: ./categories/fhevm-examples-openzeppelin
 
-# Generate Advanced Category (3 contracts)
+# Generate Advanced Category (5 contracts)
 npm run create-category advanced
 # Default output: ./categories/fhevm-examples-advanced
 
@@ -268,9 +274,11 @@ npm run generate-docs access-control
 npm run generate-docs input-proof-basics
 npm run generate-docs view-with-encrypted
 npm run generate-docs erc7984-example
+npm run generate-docs erc7984-omnibus
 npm run generate-docs fhe-legacy-vault
+npm run generate-docs confidential-portfolio-rebalancer
 
-# Generate ALL documentation (37 files)
+# Generate ALL documentation (39 files)
 npm run generate-all-docs
 
 # Show help
@@ -299,8 +307,8 @@ Available categories:
   - access-control (3 examples)
   - input-proofs (4 examples)
   - anti-patterns (3 examples)
-  - openzeppelin (9 examples)
-  - advanced (4 examples)
+  - openzeppelin (10 examples)
+  - advanced (5 examples)
 
 What it does:
   1. Generates all examples with --with-docs flag
