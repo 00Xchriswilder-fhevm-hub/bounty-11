@@ -10,10 +10,10 @@
 
 This project delivers a complete solution for the Zama Bounty Season 11 challenge: **"Build The FHEVM Example Hub"**. It provides:
 
-- ✅ **38 Standalone Example Contracts** covering all required categories
-- ✅ **38 Comprehensive Test Suites** with success and failure cases
+- ✅ **39 Standalone Example Contracts** covering all required categories
+- ✅ **39 Comprehensive Test Suites** with success and failure cases
 - ✅ **6 Automation Scripts** for scaffolding, documentation generation, batch operations, and maintenance
-- ✅ **38 Auto-Generated Documentation Files** in GitBook format
+- ✅ **39 Auto-Generated Documentation Files** in GitBook format
 - ✅ **6 Category Projects** for generating multi-example repositories
 - ✅ **Base Template Integration** using the official FHEVM Hardhat template
 - ✅ **Factory Pattern Implementation** for OpenZeppelin vesting wallets (production-ready)
@@ -22,9 +22,9 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 38 | ✅ Complete |
-| **Tests** | 38 | ✅ Complete |
-| **Documentation** | 38 | ✅ Complete |
+| **Contracts** | 39 | ✅ Complete |
+| **Tests** | 39 | ✅ Complete |
+| **Documentation** | 39 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
 | **OpenZeppelin Examples** | 10 | ✅ Complete |
@@ -81,7 +81,7 @@ npm run create-category basic ./my-custom-path/basic-examples
 # - input-proofs (4 examples)
 # - anti-patterns (3 examples)
 # - openzeppelin (10 examples)
-# - advanced (4 examples)
+# - advanced (5 examples)
 ```
 
 ### Generate Documentation
@@ -122,7 +122,7 @@ npm run generate-all-and-test -- --category openzeppelin
 - `input-proofs` (4 examples)
 - `anti-patterns` (3 examples)
 - `openzeppelin` (10 examples)
-- `advanced` (4 examples)
+- `advanced` (5 examples)
 
 ### 🎨 FHEVM Studio (Interactive CLI)
 
@@ -198,7 +198,7 @@ npm run studio
 ```
 zama-bounty-11/
 ├── fhevm-hardhat-template/     # Base Hardhat template (cloned)
-├── contracts/                  # 29 example contracts
+├── contracts/                  # 30 example contracts
 │   ├── basic/                  # 9 basic examples
 │   │   ├── FHECounter.sol
 │   │   ├── encrypt/            # Encryption examples
@@ -217,8 +217,13 @@ zama-bounty-11/
 │   │   ├── VestingWalletCliffConfidentialFactoryMock.sol (factory pattern)
 │   │   ├── ERC7984VotesMock.sol (confidential voting)
 │   │   └── ERC7984OmnibusMock.sol (omnibus pattern)
-│   └── advanced/               # 4 advanced examples
-├── test/                       # 32 comprehensive test files
+│   └── advanced/               # 5 advanced examples
+│       ├── FHELegacyVault.sol
+│       ├── SimpleVoting.sol
+│       ├── ReviewCardsFHE.sol
+│       ├── BlindAuction.sol
+│       └── ConfidentialPortfolioRebalancer.sol (portfolio rebalancing)
+├── test/                       # 33 comprehensive test files
 │   ├── basic/                  # 9 test files
 │   ├── access-control/         # 3 test files
 │   ├── input-proofs/           # 4 test files
@@ -234,7 +239,12 @@ zama-bounty-11/
 │   │   ├── ERC7984VotesExample.ts (confidential voting)
 │   │   ├── ERC7984RwaExample.ts (Real World Assets)
 │   │   └── ERC7984OmnibusExample.ts (omnibus pattern)
-│   └── advanced/                # 4 test files
+│   └── advanced/                # 5 test files
+│       ├── FHELegacyVault.ts
+│       ├── SimpleVoting.ts
+│       ├── ReviewCardsFHE.ts
+│       ├── BlindAuction.ts
+│       └── ConfidentialPortfolioRebalancer.ts (portfolio rebalancing)
 ├── categories/                 # Generated category projects
 │   ├── fhevm-examples-basic/
 │   ├── fhevm-examples-access-control/
@@ -306,12 +316,56 @@ zama-bounty-11/
 9. **erc7984-rwa** - ERC7984 RWA (Real World Assets) with compliance features (pause, freeze, block users, force transfers)
 10. **erc7984-omnibus** - ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses
 
-### Advanced Examples (4)
+### Advanced Examples (5)
 
 1. **fhe-legacy-vault** - Time-locked vault with IPFS
 2. **simple-voting** - Confidential voting system
 3. **review-cards-fhe** - Encrypted rating system
 4. **blind-auction** - Confidential blind auction with reveal phase
+5. **confidential-portfolio-rebalancer** - Advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations
+
+#### Confidential Portfolio Rebalancer - Test Results
+
+The **confidential-portfolio-rebalancer** is one of the most complex examples, demonstrating advanced FHE operations across multiple encrypted tokens. Here's the complete test output showing all 17 passing tests:
+
+```
+  ConfidentialPortfolioRebalancer
+    ✔ Deployment
+      ✓ should set the right owner
+      ✓ should set the right rebalancing threshold
+      ✓ should have zero token count initially
+
+    ✔ Token Management
+      ✓ should allow owner to add tokens
+      ✓ should fail when non-owner tries to add token
+      ✓ should fail when adding duplicate token
+      ✓ should allow adding multiple tokens
+      ✓ should allow owner to remove token
+      ✓ should allow updating rebalancing threshold
+
+    ✔ Deposits and Withdrawals
+      ✓ should allow depositing tokens to portfolio (44ms)
+      ✓ should allow withdrawing tokens from portfolio (49ms)
+      ✓ should fail when withdrawing more than balance (44ms)
+
+    ✔ Portfolio Calculations
+      ✓ should calculate total portfolio value (66ms)
+      ✓ should calculate target amount for token
+
+    ✔ Rebalancing
+      ✓ should detect when rebalancing is needed (73ms)
+      ✓ should execute rebalancing when needed (41ms)
+      ✓ should fail when rebalancing is not needed
+
+  17 passing (909ms)
+```
+
+**Key Complexity Indicators:**
+- **17 comprehensive tests** covering deployment, token management, deposits/withdrawals, portfolio calculations, and rebalancing
+- **Multiple ERC7984 tokens** with encrypted balances
+- **Complex FHE arithmetic** operations (add, mul, div, sub, ge, select) for portfolio calculations
+- **Automatic rebalancing logic** with encrypted threshold comparisons
+- **Permission management** for multiple encrypted values across different tokens
 
 #### Blind Auction Details
 
@@ -366,7 +420,7 @@ npm run create-category <category-name> <output-dir>
 - `input-proofs` - 4 input proof examples (basics, usage, anti-patterns, handles)
 - `anti-patterns` - 3 anti-pattern examples (common mistakes to avoid)
 - `openzeppelin` - 10 OpenZeppelin examples (ERC7984, wrappers, swaps, vesting, voting, RWA, omnibus)
-- `advanced` - 4 advanced examples (vault, voting, rating, blind auction)
+- `advanced` - 5 advanced examples (vault, voting, rating, blind auction, portfolio rebalancing)
 
 **Example:**
 ```bash

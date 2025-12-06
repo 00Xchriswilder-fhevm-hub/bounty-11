@@ -367,6 +367,15 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     category: 'Advanced',
     chapter: 'advanced',
   },
+  'confidential-portfolio-rebalancer': {
+    title: 'Confidential Portfolio Rebalancer',
+    description: 'Advanced portfolio management system with automatic rebalancing using multiple ERC7984 tokens, encrypted calculations, and complex FHE operations including add, mul, div, and comparisons.',
+    contract: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol',
+    test: 'test/advanced/ConfidentialPortfolioRebalancer.ts',
+    output: 'docs/confidential-portfolio-rebalancer.md',
+    category: 'Advanced',
+    chapter: 'advanced',
+  },
 };
 
 function readFile(filePath: string): string {

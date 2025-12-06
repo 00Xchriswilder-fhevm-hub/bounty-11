@@ -311,6 +311,13 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     description: 'Confidential blind auction where bids are encrypted until reveal phase',
     category: 'advanced',
   },
+  'confidential-portfolio-rebalancer': {
+    contract: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol',
+    test: 'test/advanced/ConfidentialPortfolioRebalancer.ts',
+    description: 'Advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations',
+    category: 'advanced',
+    dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
+  },
 };
 
 function copyDirectoryRecursive(source: string, destination: string): void {

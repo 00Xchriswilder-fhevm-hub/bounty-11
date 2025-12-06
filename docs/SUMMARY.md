@@ -62,5 +62,6 @@
 - [Simple Voting](simple-voting.md)
 - [Review Cards FHE](review-cards-fhe.md)
 - [Blind Auction](blind-auction.md)
+- [Confidential Portfolio Rebalancer](confidential-portfolio-rebalancer.md)
 
 - [FHE Legacy Vault](fhe-legacy-vault.md)

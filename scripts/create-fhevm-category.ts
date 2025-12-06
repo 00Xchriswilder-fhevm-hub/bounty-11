@@ -128,12 +128,13 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
   },
   advanced: {
     name: 'Advanced FHEVM Examples',
-    description: 'Complex FHEVM applications including vaults, voting systems, rating systems, and blind auctions',
+    description: 'Complex FHEVM applications including vaults, voting systems, rating systems, blind auctions, and portfolio management',
     contracts: [
       { path: 'contracts/advanced/FHELegacyVault.sol', test: 'test/advanced/FHELegacyVault.ts' },
       { path: 'contracts/advanced/SimpleVoting.sol', test: 'test/advanced/SimpleVoting.ts' },
       { path: 'contracts/advanced/ReviewCardsFHE.sol', test: 'test/advanced/ReviewCardsFHE.ts' },
       { path: 'contracts/advanced/BlindAuction.sol', test: 'test/advanced/BlindAuction.ts' },
+      { path: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol', test: 'test/advanced/ConfidentialPortfolioRebalancer.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
     ],
   },
 };
@@ -395,7 +396,25 @@ function createCategoryProject(category: string, outputDir: string): void {
         destContractPath = path.join(contractsDir, path.basename(contractPath));
       }
       
-      fs.copyFileSync(fullContractPath, destContractPath);
+      // Read contract content and fix import paths for additional files
+      let contractContent = fs.readFileSync(fullContractPath, 'utf-8');
+      
+      // Fix import paths for openzeppelin contracts when copying to category
+      // Change ../openzeppelin/ to ./openzeppelin/ or openzeppelin/ depending on structure
+      if (additionalFiles) {
+        additionalFiles.forEach(filePath => {
+          if (filePath.startsWith('contracts/openzeppelin/')) {
+            const fileName = path.basename(filePath);
+            // Replace ../openzeppelin/ with ./openzeppelin/ or openzeppelin/
+            contractContent = contractContent.replace(
+              /from\s+["']\.\.\/openzeppelin\/([^"']+)["']/g,
+              `from "./openzeppelin/$1"`
+            );
+          }
+        });
+      }
+      
+      fs.writeFileSync(destContractPath, contractContent);
       log(`  ✓ ${contractRelativePath}`, Color.Green);
     }
 
@@ -447,11 +466,25 @@ function createCategoryProject(category: string, outputDir: string): void {
         if (fs.existsSync(fullFilePath)) {
           // Determine if it's a contract or test helper
           if (filePath.startsWith('contracts/')) {
-            // It's a contract - copy to contracts directory
-            const contractName = path.basename(filePath);
-            const destContractPath = path.join(contractsDir, contractName);
+            // It's a contract - preserve directory structure if it has subdirectories
+            const contractRelativePath = filePath.replace('contracts/', '');
+            const subDir = path.dirname(contractRelativePath);
+            
+            let destContractPath: string;
+            if (subDir && subDir !== '.') {
+              // Preserve subdirectory structure (e.g., openzeppelin/)
+              const destSubDir = path.join(contractsDir, subDir);
+              if (!fs.existsSync(destSubDir)) {
+                fs.mkdirSync(destSubDir, { recursive: true });
+              }
+              destContractPath = path.join(destSubDir, path.basename(filePath));
+            } else {
+              // No subdirectory, copy to root contracts directory
+              const contractName = path.basename(filePath);
+              destContractPath = path.join(contractsDir, contractName);
+            }
             fs.copyFileSync(fullFilePath, destContractPath);
-            log(`  ✓ ${contractName} (dependency)`, Color.Green);
+            log(`  ✓ ${contractRelativePath} (dependency)`, Color.Green);
           } else if (filePath.startsWith('test/')) {
             // It's a test helper - copy to test directory
             const fileName = path.basename(filePath);
