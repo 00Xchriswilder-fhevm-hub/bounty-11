@@ -60,7 +60,7 @@
     "ts-node": "^10.9.2",
     "typechain": "^8.3.2",
     "typescript": "^5.8.3",
-    "@fhevm/solidity": "0.9.1",
+    "@fhevm/solidity": "0.3.0-5",
     "@fhevm/mock-utils": "0.3.0-1",
     "@openzeppelin/confidential-contracts": "^0.3.0",
     "@openzeppelin/contracts": "^5.4.0"
