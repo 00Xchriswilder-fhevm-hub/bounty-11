@@ -22,9 +22,9 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 39 | ✅ Complete |
-| **Tests** | 39 | ✅ Complete |
-| **Documentation** | 39 | ✅ Complete |
+| **Contracts** | 40 | ✅ Complete |
+| **Tests** | 40 | ✅ Complete |
+| **Documentation** | 40 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
 | **OpenZeppelin Examples** | 10 | ✅ Complete |
@@ -111,7 +111,7 @@ npm run generate-all-and-test -- --category openzeppelin
 ```
 
 **What it does:**
-- Generates all 38 examples with `--with-docs` flag
+- Generates all 40 examples with `--with-docs` flag
 - Automatically changes directory into each output folder
 - Runs `npm test` in each folder (no `npm install` needed)
 - Shows summary of successes/failures
@@ -224,8 +224,7 @@ zama-bounty-11/
 │       ├── BlindAuction.sol
 │       ├── ConfidentialPortfolioRebalancer.sol (confidential portfolio rebalancing)
 │       └── ConfidentialLendingPool.sol (confidential lending with collateral and debt)
-│       └── ConfidentialPortfolioRebalancer.sol (portfolio rebalancing)
-├── test/                       # 33 comprehensive test files
+├── test/                       # 40 comprehensive test files
 │   ├── basic/                  # 9 test files
 │   ├── access-control/         # 3 test files
 │   ├── input-proofs/           # 4 test files
@@ -819,9 +818,9 @@ BSD-3-Clause-Clear License
 
 **Overall Progress**: 100% ✅
 
-- ✅ Contracts: 38/38 (100%)
-- ✅ Tests: 38/38 (100%)
-- ✅ Documentation: 38/38 (100%)
+- ✅ Contracts: 40/40 (100%)
+- ✅ Tests: 40/40 (100%)
+- ✅ Documentation: 40/40 (100%)
 - ✅ Automation: 6/6 (100%)
 - ✅ Compilation: All contracts compile successfully
 - ✅ OpenZeppelin Examples: 10/10 (including factory-based vesting wallets, confidential voting, RWA, and omnibus)
