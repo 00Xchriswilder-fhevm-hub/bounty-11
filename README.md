@@ -6,6 +6,10 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D20-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 
+## 🎥 Video Demo
+
+[![YouTube](https://img.shields.io/badge/YouTube-Demo%20Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=l8n3BQUJEtA)
+
 ## 🎯 Project Overview
 
 This project delivers a complete solution for the Zama Bounty Season 11 challenge: **"Build The FHEVM Example Hub"**. It provides:
