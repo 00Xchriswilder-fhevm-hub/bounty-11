@@ -9,7 +9,6 @@ Fixed permission & conversion handling for FHE operations. This example demonstr
 ## What You'll Learn
 
 - **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
-- **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
 
 ## Key Concepts
@@ -18,18 +17,9 @@ Fixed permission & conversion handling for FHE operations. This example demonstr
 
 The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
 
-### 2. Off-Chain Encryption
+### 2. FHE Permissions
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
-
-### 3. FHE Permissions
-
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Permissions control who can perform operations (contracts need `FHE.allowThis()`) and decrypt values (users need `FHE.allow()`).
 
 ## Step-by-Step Walkthrough
 

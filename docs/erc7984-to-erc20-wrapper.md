@@ -11,6 +11,22 @@ Wraps standard ERC20 tokens into confidential ERC7984 tokens. This example demon
 
 ## Key Concepts
 
+### 1. Wraps
+
+standard ERC20 tokens into confidential ERC7984 tokens
+
+### 2. Allows
+
+confidential operations on wrapped tokens
+
+### 3. Maintains 1
+
+1 relationship (or rate-based) with underlying token
+
+### 4. Uses
+
+OpenZeppelin's ERC7984ERC20Wrapper base contract
+
 ## Step-by-Step Walkthrough
 
 ### Step 1: Setup

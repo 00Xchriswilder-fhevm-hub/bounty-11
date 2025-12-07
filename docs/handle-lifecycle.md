@@ -12,22 +12,25 @@ Handles are symbolic representations of encrypted values. This example demonstra
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. Handles
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+are symbolic representations of encrypted values
 
-### 2. Off-Chain Encryption
+### 2. Generated
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+during encryption (client-side)
 
-### 3. FHE Permissions
+### 3. Used
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+in contract operations
+
+### 4. Converted
+
+to bytes32 for storage/events
+
+### 5. Used
+
+for decryption
 
 ## Step-by-Step Walkthrough
 

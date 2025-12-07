@@ -11,26 +11,24 @@ Demonstrates FHE.allowTransient() for temporary permissions. FHE.allowTransient(
 - **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
 - **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **User decryption** - Decrypting results for authorized users
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. FHE.allowTransient()
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+grants permission for a single operation only
 
-### 2. Off-Chain Encryption
+### 2. Permission
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+is automatically revoked after the operation
 
-### 3. FHE Permissions
+### 3. Useful
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+when you don't want to grant permanent access
+
+### 4. More
+
+secure for one-time operations
 
 ## Step-by-Step Walkthrough
 

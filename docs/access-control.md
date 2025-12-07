@@ -11,26 +11,24 @@ FHE.allowThis() grants permission to the contract (address(this)). This example 
 - **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
 - **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **User decryption** - Decrypting results for authorized users
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. FHE.allowThis()
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+grants permission to the contract (address(this))
 
-### 2. Off-Chain Encryption
+### 2. FHE.allow(encryptedValue,
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+user) grants permission to a specific user
 
-### 3. FHE Permissions
+### 3. Both
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+permissions are typically needed for operations
+
+### 4. Permissions
+
+are checked when decrypting or performing operations
 
 ## Step-by-Step Walkthrough
 

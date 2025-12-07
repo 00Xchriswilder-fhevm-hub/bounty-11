@@ -13,16 +13,11 @@ This example demonstrates converting external encrypted inputs using Fully Homom
 
 ### 1. Off-Chain Encryption
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+Values are encrypted locally (on the client side) before being sent to the contract: plaintext values never appear in transactions, encryption is cryptographically bound to [contract, user] pair, and input proofs verify the binding.
 
 ### 2. FHE Permissions
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Permissions control who can perform operations (contracts need `FHE.allowThis()`) and decrypt values (users need `FHE.allow()`).
 
 ## Step-by-Step Walkthrough
 

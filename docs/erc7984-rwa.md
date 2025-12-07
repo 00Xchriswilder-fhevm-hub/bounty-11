@@ -8,23 +8,33 @@ This example shows how to extend ERC7984Rwa for compliant confidential tokens, c
 
 ## What You'll Learn
 
-- **Off-chain encryption** - Encrypting values locally before sending to contract
-- **FHE permissions** - Granting permissions for operations and decryption
+- **How to extend** - ERC7984Rwa for compliant confidential tokens
+- **Compliance features: pause,** - freeze, block users
+- **Agent role for** - administrative actions
+- **Force transfers for** - compliance enforcement
+- **Frozen balances and** - available balances
 
 ## Key Concepts
 
-### 1. Off-Chain Encryption
+### 1. Agent Role
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+Special role for compliance actions (pause, freeze, block, force transfer)
 
-### 2. FHE Permissions
+### 2. Frozen Balance
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Amount of tokens that cannot be transferred (for compliance)
+
+### 3. Available Balance
+
+Unfrozen balance that can be transferred
+
+### 4. Pausable
+
+Contract can be paused to halt all transfers
+
+### 5. Restricted
+
+Users can be blocked from interacting with the token
 
 ## Step-by-Step Walkthrough
 

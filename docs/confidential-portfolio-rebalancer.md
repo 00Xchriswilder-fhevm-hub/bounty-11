@@ -8,28 +8,32 @@ Demonstrates a confidential portfolio management system with automatic rebalanci
 
 ## What You'll Learn
 
-- **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
-- **Off-chain encryption** - Encrypting values locally before sending to contract
-- **FHE permissions** - Granting permissions for operations and decryption
+- **Tracking multiple ERC7984** - token balances (encrypted)
+- **Calculating portfolio allocation** - percentages
+- **Comparing current vs** - target allocations
+- **Executing rebalancing trades** - with encrypted amounts
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. Portfolio
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+Collection of multiple confidential token balances
 
-### 2. Off-Chain Encryption
+### 2. Target Allocation
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+Desired percentage allocation for each token (plaintext for calculation)
 
-### 3. FHE Permissions
+### 3. Current Allocation
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Actual percentage based on current balances (calculated from encrypted values)
+
+### 4. Rebalancing
+
+Adjusting positions to match target allocations
+
+### 5. Rebalancing Threshold
+
+Minimum drift percentage before rebalancing triggers
 
 ## Step-by-Step Walkthrough
 

@@ -8,28 +8,35 @@ This example shows how to extend ERC7984Omnibus for omnibus transfers, confident
 
 ## What You'll Learn
 
-- **Off-chain encryption** - Encrypting values locally before sending to contract
-- **FHE permissions** - Granting permissions for operations and decryption
-- **Omnibus pattern** - Onchain settlement between omnibus accounts with off-chain sub-account tracking
-- **Encrypted addresses** - Encrypting sub-account sender and recipient addresses for privacy
-- **OmnibusConfidentialTransfer events** - Event emission with encrypted addresses for off-chain tracking
+- **How to extend** - ERC7984Omnibus for omnibus transfers
+- **Confidential transfers with** - encrypted sender/recipient addresses
+- **Omnibus pattern: onchain** - settlement between omnibus accounts
+- **Sub-account** - tracking (off-chain)
+- **Event emission for** - omnibus transfers
 
 ## Key Concepts
 
-### 1. Off-Chain Encryption
+### 1. Omnibus
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+A pattern where multiple sub-accounts are tracked off-chain
 
-### 2. FHE Permissions
+### 2. Onchain
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+settlement occurs between omnibus accounts (omnibusFrom, omnibusTo)
 
-### 3. Omnibus Pattern
+### 3. Sub-account
+
+sender/recipient are encrypted in events
+
+### 4. No
+
+onchain accounting for sub-accounts (tracked externally)
+
+### 5. OmnibusConfidentialTransfer
+
+event contains encrypted addresses
+
+### 6. Omnibus Pattern
 
 The omnibus pattern is useful for exchanges, custodians, or intermediaries where:
 - **Multiple sub-accounts** are tracked off-chain (not stored on-chain)
@@ -39,7 +46,7 @@ The omnibus pattern is useful for exchanges, custodians, or intermediaries where
 - **ACL permissions** are automatically granted to omnibus accounts
 - **Events** (OmnibusConfidentialTransfer) allow off-chain tracking of sub-account balances
 
-### 4. Encrypted Addresses in Omnibus Transfers
+### 7. Encrypted Addresses in Omnibus Transfers
 
 In omnibus transfers, both the amount and the sub-account addresses are encrypted:
 - **Encrypted sender address**: The sub-account sending tokens (encrypted for privacy)

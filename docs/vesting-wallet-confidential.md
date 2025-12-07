@@ -12,13 +12,6 @@ Concrete factory implementation for creating VestingWalletConfidential clones. T
 
 ## Key Concepts
 
-### 1. Off-Chain Encryption
-
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
-
 ## Step-by-Step Walkthrough
 
 ### Step 1: Setup

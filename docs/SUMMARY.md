@@ -1,16 +1,14 @@
 # FHEVM Examples Documentation
 
-<!-- This file is auto-generated. Run 'npm run generate-all-docs' to populate it. -->
-
 ## Advanced
-- [Confidential Lending Pool](confidential-lending-pool.md)
 - [FHE Legacy Vault](fhe-legacy-vault.md)
 - [Simple Voting](simple-voting.md)
 - [Review Cards FHE](review-cards-fhe.md)
 - [Blind Auction](blind-auction.md)
-- [Confidential Yield Aggregator](confidential-yield-aggregator.md)
-
 - [Confidential Portfolio Rebalancer](confidential-portfolio-rebalancer.md)
+- [Confidential Lending Pool](confidential-lending-pool.md)
+
+- [Confidential Yield Aggregator](confidential-yield-aggregator.md)
 
 ## Basic
 

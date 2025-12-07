@@ -11,26 +11,24 @@ Bids are encrypted during the bidding phase. This example demonstrates public de
 - **FHE.select operation** - How to perform this specific homomorphic operation on encrypted values
 - **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **Public decryption** - Making results publicly decryptable
 
 ## Key Concepts
 
-### 1. FHE.select Operation
+### 1. Bids
 
-The `FHE.select()` function performs conditional selection (if-then-else) on encrypted values based on an encrypted boolean condition.
+are encrypted during the bidding phase
 
-### 2. Off-Chain Encryption
+### 2. Only
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+the highest bidder is tracked (encrypted)
 
-### 3. FHE Permissions
+### 3. After
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+reveal, bids are decrypted publicly
+
+### 4. Winner
+
+is determined from decrypted bids
 
 ## Step-by-Step Walkthrough
 

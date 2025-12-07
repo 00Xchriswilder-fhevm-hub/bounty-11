@@ -4,32 +4,37 @@
 
 ## Overview
 
-A comprehensive confidential lending system that enables users to borrow against encrypted collateral while maintaining complete privacy. Borrowers can deposit multiple types of ERC7984 tokens as collateral, borrow against them, and manage their positions—all without revealing their balances, debt amounts, or collateralization ratios on-chain. The contract supports configurable collateral factors per asset, encrypted interest calculations, and automated liquidation logic based on encrypted health factors. All operations use fully homomorphic encryption (FHE) to perform calculations on encrypted values, ensuring that sensitive financial data remains private throughout the entire lending lifecycle. All collateral and debt amounts remain encrypted throughout the entire lifecycle.
+Demonstrates a confidential lending system with encrypted collateral and debt. This example shows how to multiple ERC7984 assets as collateral, encrypted collateral and debt tracking per borrower, collateralization ratio calculations (encrypted), interest calculations with encrypted amounts, liquidation logic based on encrypted health factors. Collateral: ERC7984 tokens deposited as security for loans. All collateral and debt amounts remain encrypted throughout. This example demonstrates confidential token operations with encrypted balances and transfers and shows how to manage FHE permissions for both contracts and users using external encrypted inputs with input proofs for verification.
 
 ## What You'll Learn
 
-- **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
-- **Off-chain encryption** - Encrypting values locally before sending to contract
-- **FHE permissions** - Granting permissions for operations and decryption
+- **Multiple ERC7984 assets** - as collateral
+- **Encrypted collateral and** - debt tracking per borrower
+- **Collateralization ratio calculations** - (encrypted)
+- **Interest calculations with** - encrypted amounts
+- **Liquidation logic based** - on encrypted health factors
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. Collateral
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+ERC7984 tokens deposited as security for loans
 
-### 2. Off-Chain Encryption
+### 2. Debt
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+Encrypted amount borrowed against collateral
 
-### 3. FHE Permissions
+### 3. Collateralization Ratio
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+(collateral value / debt) * 100
+
+### 4. Health Factor
+
+Encrypted metric determining liquidation eligibility
+
+### 5. Liquidation Threshold
+
+Minimum collateralization ratio before liquidation
 
 ## Step-by-Step Walkthrough
 
@@ -47,7 +52,7 @@ Call the function that performs `FHE.add` (e.g., `removeAsset()`).
 
 **The Problem:** await expect(
         (pool.connect(signers.borrower) as any).addAsset(collateralToken, 8000)
-      ).to.be.revertedWithCustomError(pool, "U...
+      ).to.be.revertedWithCustomError(pool, "Unau...
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -58,7 +63,7 @@ Call the function that performs `FHE.add` (e.g., `removeAsset()`).
 **The Problem:** await (pool.connect(signers.deployer) as any).addAsset(collateralToken, 8000);
 
       await expect(
-        (pool.connect(signers.deployer)...
+        (pool.connect(signers.deployer) as...
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -66,11 +71,7 @@ Call the function that performs `FHE.add` (e.g., `removeAsset()`).
 
 ### ❌ Pitfall 3: should fail when withdrawing more than collateral
 
-**The Problem:** const depositAmount = 100;
-      const withdrawAmount = 200;
-      const tokenAddress = await collateralToken.getAddress();
-
-      // Mint...
+**The Problem:** Mint and deposit
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -110,28 +111,27 @@ import {ZamaEthereumConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 import {ERC7984Mock} from "../openzeppelin/ERC7984Mock.sol";
 
 /// @title Confidential Lending Pool
-/// @notice A comprehensive confidential lending system that enables users to borrow against encrypted collateral while maintaining complete privacy. Borrowers can deposit multiple types of ERC7984 tokens as collateral, borrow against them, and manage their positions—all without revealing their balances, debt amounts, or collateralization ratios on-chain. The contract supports configurable collateral factors per asset, encrypted interest calculations, and automated liquidation logic based on encrypted health factors. All operations use fully homomorphic encryption (FHE) to perform calculations on encrypted values, ensuring that sensitive financial data remains private throughout the entire lending lifecycle.
+/// @notice Demonstrates a confidential lending system with encrypted collateral and debt
 /// @dev This contract demonstrates:
-///      - Multiple ERC7984 assets as collateral with configurable collateral factors
+///      - Multiple ERC7984 assets as collateral
 ///      - Encrypted collateral and debt tracking per borrower
-///      - Collateralization ratio calculations performed entirely on encrypted values
-///      - Interest calculations with encrypted debt amounts
+///      - Collateralization ratio calculations (encrypted)
+///      - Interest calculations with encrypted amounts
 ///      - Liquidation logic based on encrypted health factors
-///      - Complex FHE operations: add, mul, sub, div, ge, le, select
+///      - Complex FHE operations: add, mul, sub, div, comparisons
 /// 
 /// @dev Key Concepts:
-///      - **Collateral**: ERC7984 tokens deposited as security for loans. Each asset has a collateral factor (e.g., 80%) determining how much can be borrowed.
-///      - **Debt**: Encrypted amount borrowed against collateral. Debt accrues interest over time.
-///      - **Collateralization Ratio**: (collateral value / debt) * 100. Higher ratios indicate healthier positions.
-///      - **Health Factor**: Encrypted metric determining liquidation eligibility. Positions below the liquidation threshold can be liquidated.
-///      - **Liquidation Threshold**: Minimum collateralization ratio (e.g., 150%) before liquidation becomes possible.
+///      - Collateral: ERC7984 tokens deposited as security for loans
+///      - Debt: Encrypted amount borrowed against collateral
+///      - Collateralization Ratio: (collateral value / debt) * 100
+///      - Health Factor: Encrypted metric determining liquidation eligibility
+///      - Liquidation Threshold: Minimum collateralization ratio before liquidation
 /// 
 /// @dev Educational Notes:
-///      - All collateral and debt amounts remain encrypted throughout the entire lifecycle
-///      - Interest calculations work on encrypted debt values using FHE operations
-///      - Liquidation checks use encrypted comparisons (FHE.ge, FHE.le) without revealing actual values
-///      - Demonstrates complex DeFi primitives (lending, borrowing, liquidation) with complete privacy preservation
-///      - Shows how to manage FHE permissions for multiple encrypted values across different operations
+///      - All collateral and debt amounts remain encrypted throughout
+///      - Interest accrues on encrypted debt values
+///      - Liquidation checks use encrypted comparisons
+///      - Demonstrates complex DeFi primitives with privacy preservation
 contract ConfidentialLendingPool is ZamaEthereumConfig {
     /// @notice Maximum number of supported collateral assets
     uint8 public constant MAX_ASSETS = 5;

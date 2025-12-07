@@ -8,24 +8,13 @@ This example demonstrates public decryption with multiple encrypted values, allo
 
 ## What You'll Learn
 
-- **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **Public decryption** - Making results publicly decryptable
 
 ## Key Concepts
 
-### 1. Off-Chain Encryption
+### 1. FHE Permissions
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
-
-### 2. FHE Permissions
-
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Permissions control who can perform operations (contracts need `FHE.allowThis()`) and decrypt values (users need `FHE.allow()`).
 
 ## Step-by-Step Walkthrough
 

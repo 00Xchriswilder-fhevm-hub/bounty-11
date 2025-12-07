@@ -8,22 +8,24 @@ Input proofs bind encryption to [contract, user] pair. This example demonstrates
 
 - **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **User decryption** - Decrypting results for authorized users
 
 ## Key Concepts
 
-### 1. Off-Chain Encryption
+### 1. Input
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+proofs bind encryption to [contract, user] pair
 
-### 2. FHE Permissions
+### 2. The
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+user who encrypts must be the same as msg.sender
+
+### 3. Proofs
+
+are generated automatically by FHEVM client
+
+### 4. Proofs
+
+are verified on-chain automatically
 
 ## Step-by-Step Walkthrough
 

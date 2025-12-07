@@ -8,7 +8,6 @@ This example demonstrates adding encrypted values, bitwise XOR operations using 
 
 - **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
 - **FHE permissions** - Granting permissions for operations and decryption
-- **User decryption** - Decrypting results for authorized users
 
 ## Key Concepts
 
@@ -18,9 +17,7 @@ The `FHE.add()` function performs addition on encrypted values, computing the su
 
 ### 2. FHE Permissions
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+Permissions control who can perform operations (contracts need `FHE.allowThis()`) and decrypt values (users need `FHE.allow()`).
 
 ## Step-by-Step Walkthrough
 

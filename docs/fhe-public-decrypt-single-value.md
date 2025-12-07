@@ -6,7 +6,6 @@ This example demonstrates public decryption with multiple encrypted values, allo
 
 ## What You'll Learn
 
-- **Public decryption** - Making results publicly decryptable
 
 ## Key Concepts
 

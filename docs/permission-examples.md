@@ -11,26 +11,24 @@ Permissions are required for operations on encrypted values. This example demons
 - **FHE.add operation** - How to perform this specific homomorphic operation on encrypted values
 - **Off-chain encryption** - Encrypting values locally before sending to contract
 - **FHE permissions** - Granting permissions for operations and decryption
-- **User decryption** - Decrypting results for authorized users
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. Permissions
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+are required for operations on encrypted values
 
-### 2. Off-Chain Encryption
+### 2. Contract
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+needs allowThis to perform operations
 
-### 3. FHE Permissions
+### 3. Users
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+need allow to decrypt values
+
+### 4. Operations
+
+inherit permissions from operands
 
 ## Step-by-Step Walkthrough
 

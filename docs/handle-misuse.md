@@ -12,22 +12,21 @@ Handles are bound to specific contracts. This example demonstrates the FHE encry
 
 ## Key Concepts
 
-### 1. FHE.add Operation
+### 1. Handles
 
-The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.
+are bound to specific contracts
 
-### 2. Off-Chain Encryption
+### 2. Handles
 
-Values are encrypted **locally** (on the client side) before being sent to the contract:
-- Plaintext values never appear in transactions
-- Encryption is cryptographically bound to [contract, user] pair
-- Input proofs verify the binding
+from one contract can't be used in another
 
-### 3. FHE Permissions
+### 3. Each
 
-Permissions control who can:
-- **Perform operations**: Contracts need `FHE.allowThis()`
-- **Decrypt values**: Users need `FHE.allow()`
+encryption creates a unique handle
+
+### 4. Handles
+
+must be used with their corresponding proofs
 
 ## Step-by-Step Walkthrough
 
