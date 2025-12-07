@@ -545,28 +545,270 @@ This project is licensed under the BSD-3-Clause-Clear License.
 }
 
 function extractDescription(content: string): string {
-  // Extract description from @notice tag (preferred) or first non-tag line in comment
-  // Skip @title, @dev, @param tags - only get the actual description text
+  // Build comprehensive description from multiple sources in contract comments
+  const parts: string[] = [];
   
-  // First try to get @notice
+  // Helper to clean comment lines
+  const cleanLine = (line: string): string => {
+    return line
+      .replace(/^\s*\*\s*/, '')           // Remove leading * and spaces
+      .replace(/^\/\/\/\s*/, '')          // Remove leading ///
+      .replace(/^-\s*/, '')                // Remove leading -
+      .replace(/^\s*[-•]\s*/, '')          // Remove leading bullet points
+      .trim();
+  };
+  
+  // 1. Extract @notice (main description) - but only if it's substantial
   const noticeMatch = content.match(/@notice\s+(.+?)(?:\n|$)/);
   if (noticeMatch) {
-    return noticeMatch[1].trim();
+    const notice = noticeMatch[1].trim();
+    // Only add if it's substantial (not just a short tagline)
+    if (notice && notice.length > 30) {
+      parts.push(notice);
+    }
   }
   
-  // If no @notice, try to get first non-tag line after /**
-  const commentBlockMatch = content.match(/\/\*\*\s*\n((?:\s*\*[^@\s].*?\n?)+)/s);
-  if (commentBlockMatch) {
-    let description = commentBlockMatch[1];
-    // Remove all @tags
-    description = description.replace(/@\w+\s+[^\n]+\n?/g, '');
-    // Remove leading * and whitespace from each line
-    description = description.replace(/^\s*\*\s*/gm, '');
-    description = description.trim();
+  // 2. Extract "This contract demonstrates" or "This example shows" section from @dev
+  const demonstratesMatch = content.match(/@dev\s+This\s+(?:contract\s+)?(?:demonstrates|shows):[\s\S]*?(?=@dev|@notice|@param|@return|Key Concepts|Educational Notes|$)/i);
+  if (demonstratesMatch) {
+    const demoLines = demonstratesMatch[0]
+      .replace(/@dev\s+This\s+(?:contract\s+)?(?:demonstrates|shows):\s*/i, '')
+      .split('\n')
+      .map(cleanLine)
+      .filter(line => {
+        // Filter out empty lines, tags, and comment markers
+        return line && 
+               line.length > 5 && 
+               !line.match(/^(@dev|@notice|@param|@return)/) && 
+               !line.startsWith('///') &&
+               !line.startsWith('*') &&
+               !line.match(/^[{}();]/);
+      })
+      .slice(0, 5) // Take first 5 bullet points
+      .map(line => line.replace(/^-\s*/, '').trim())
+      .filter(line => line.length > 10);
+    
+    if (demoLines.length > 0) {
+      // Format as a natural sentence - capitalize first letter, lowercase rest
+      const demoText = demoLines
+        .map((line, idx) => {
+          const cleaned = line.charAt(0).toLowerCase() + line.slice(1);
+          return idx === 0 ? cleaned : cleaned;
+        })
+        .join(', ');
+      
+      if (demoText && demoText.length > 20) {
+        parts.push(`This example shows how to ${demoText}.`);
+      }
+    }
+  }
+  
+  // 3. Extract key pattern/concept from @dev "Key Concepts" (first meaningful concept)
+  const keyConceptsMatch = content.match(/@dev\s+Key\s+Concepts:[\s\S]*?(?=@dev|@notice|Educational Notes|$)/i);
+  if (keyConceptsMatch) {
+    const conceptLines = keyConceptsMatch[0]
+      .replace(/@dev\s+Key\s+Concepts:\s*/i, '')
+      .split('\n')
+      .map(cleanLine)
+      .filter(line => {
+        return line && 
+               line.length > 20 && 
+               !line.match(/^(@dev|@notice)/) && 
+               !line.startsWith('///') &&
+               !line.match(/^[{}();]/);
+      });
+    
+    if (conceptLines.length > 0) {
+      // Find first meaningful concept (not just a name, but a description)
+      const firstConcept = conceptLines.find(line => 
+        line.length > 30 && 
+        line.match(/[a-z]/) && 
+        (line.includes(':') || line.match(/[a-z]{3,}/))
+      ) || conceptLines[0];
+      
+      if (firstConcept && firstConcept.length > 30) {
+        parts.push(firstConcept);
+      }
+    }
+  }
+  
+  // 4. Extract pattern description from Educational Notes
+  const educationalMatch = content.match(/@dev\s+Educational\s+Notes:[\s\S]*?(?=@dev|@notice|Key Concepts|$)/i);
+  if (educationalMatch) {
+    const eduLines = educationalMatch[0]
+      .replace(/@dev\s+Educational\s+Notes:\s*/i, '')
+      .split('\n')
+      .map(cleanLine)
+      .filter(line => {
+        return line && 
+               line.length > 30 && 
+               !line.match(/^(@dev|@notice)/) && 
+               !line.startsWith('///') &&
+               !line.match(/^[{}();]/);
+      });
+    
+    if (eduLines.length > 0) {
+      parts.push(eduLines[0]);
+    }
+  }
+  
+  // 5. If we don't have enough parts, analyze the contract code to generate description
+  // Always try to enhance with code analysis for more comprehensive descriptions
+  const codeAnalysis = analyzeContractCode(content);
+  if (codeAnalysis.length > 0) {
+    // If we have parts from comments, add code analysis to enhance
+    if (parts.length > 0) {
+      // Only add if it provides additional information
+      const partsText = parts.join(' ').toLowerCase();
+      const analysisLower = codeAnalysis.toLowerCase();
+      // Check if code analysis adds new information
+      const hasNewInfo = !partsText.includes(analysisLower.substring(0, 30)) && 
+                         !analysisLower.includes(partsText.substring(0, 30));
+      if (hasNewInfo) {
+        parts.push(codeAnalysis);
+      }
+    } else {
+      // Use code analysis as the base if no comments found
+      parts.push(codeAnalysis);
+    }
+  }
+  
+  // Combine parts into comprehensive description
+  if (parts.length > 0) {
+    // Join with proper punctuation, avoiding duplicates and fixing grammar
+    let description = parts[0];
+    
+    // Fix common issues in first part
+    description = description.replace(/\s+/g, ' ').trim();
+    
+    for (let i = 1; i < parts.length; i++) {
+      // Skip if this part is too similar to what we already have
+      const currentPart = parts[i].trim();
+      
+      // Check for significant overlap (avoid duplicates)
+      const descLower = description.toLowerCase();
+      const partLower = currentPart.toLowerCase();
+      if (descLower.includes(partLower.substring(0, Math.min(40, partLower.length))) ||
+          partLower.includes(descLower.substring(0, Math.min(40, descLower.length)))) {
+        continue;
+      }
+      
+      // Fix duplicate "how to" or "to to"
+      let cleanedPart = currentPart;
+      if (description.toLowerCase().includes('how to') && cleanedPart.toLowerCase().startsWith('how to')) {
+        cleanedPart = cleanedPart.replace(/^how to\s+/i, '');
+      }
+      if (description.toLowerCase().includes(' to ') && cleanedPart.toLowerCase().startsWith('to ')) {
+        cleanedPart = cleanedPart.replace(/^to\s+/i, '');
+      }
+      
+      // Add period if not present, then add next part
+      if (!description.endsWith('.') && !description.endsWith('!') && !description.endsWith('?')) {
+        description += '.';
+      }
+      description += ' ' + cleanedPart;
+    }
+    
+    // Clean up any remaining issues
+    description = description
+      .replace(/\s+/g, ' ')           // Multiple spaces to single
+      .replace(/\s*\.\s*\./g, '.')    // Multiple periods
+      .replace(/\s*,\s*,/g, ',')      // Multiple commas
+      .replace(/\s+how to how to/gi, ' how to')  // Fix duplicate "how to"
+      .replace(/\s+to to\s+/gi, ' to ')          // Fix duplicate "to to"
+      .trim();
+    
+    // Ensure ends with period
+    if (!description.endsWith('.') && !description.endsWith('!') && !description.endsWith('?')) {
+      description += '.';
+    }
+    
     return description;
   }
   
-  return '';
+  // Fallback to simple extraction
+  const commentMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\s*\n/);
+  return commentMatch ? commentMatch[1].trim() : '';
+}
+
+// Analyze contract code to generate description when comments are minimal
+function analyzeContractCode(content: string): string {
+  const analysis: string[] = [];
+  
+  // Extract contract name
+  const contractMatch = content.match(/contract\s+(\w+)/);
+  const contractName = contractMatch ? contractMatch[1] : 'contract';
+  
+  // Detect FHE operations used
+  const fheOps: string[] = [];
+  const fheOpPatterns = [
+    { pattern: /FHE\.min\(/g, name: 'FHE.min', desc: 'finding the minimum of two encrypted values' },
+    { pattern: /FHE\.max\(/g, name: 'FHE.max', desc: 'finding the maximum of two encrypted values' },
+    { pattern: /FHE\.add\(/g, name: 'FHE.add', desc: 'adding encrypted values' },
+    { pattern: /FHE\.sub\(/g, name: 'FHE.sub', desc: 'subtracting encrypted values' },
+    { pattern: /FHE\.mul\(/g, name: 'FHE.mul', desc: 'multiplying encrypted values' },
+    { pattern: /FHE\.div\(/g, name: 'FHE.div', desc: 'dividing encrypted values' },
+    { pattern: /FHE\.xor\(/g, name: 'FHE.xor', desc: 'bitwise XOR operations' },
+    { pattern: /FHE\.and\(/g, name: 'FHE.and', desc: 'bitwise AND operations' },
+    { pattern: /FHE\.or\(/g, name: 'FHE.or', desc: 'bitwise OR operations' },
+    { pattern: /FHE\.select\(/g, name: 'FHE.select', desc: 'conditional selection' },
+    { pattern: /FHE\.fromExternal\(/g, name: 'FHE.fromExternal', desc: 'converting external encrypted inputs' },
+    { pattern: /FHE\.decrypt\(/g, name: 'FHE.decrypt', desc: 'decrypting values' },
+    { pattern: /FHE\.publicDecrypt\(/g, name: 'FHE.publicDecrypt', desc: 'public decryption' },
+  ];
+  
+  for (const op of fheOpPatterns) {
+    if (content.match(op.pattern)) {
+      fheOps.push(op.desc);
+    }
+  }
+  
+  // Detect specific patterns and use cases
+  if (content.includes('makePubliclyDecryptable') || content.includes('publicDecrypt')) {
+    if (content.includes('multiple') || content.includes('array') || content.includes('[]')) {
+      analysis.push('This example demonstrates public decryption with multiple encrypted values, allowing anyone to decrypt results without requiring individual user permissions');
+    } else {
+      analysis.push('This example demonstrates public decryption, allowing anyone to decrypt encrypted values without requiring individual user permissions');
+    }
+  } else if (content.includes('mapping') && content.includes('auction')) {
+    analysis.push('This example implements a confidential auction mechanism where bids are encrypted during the bidding phase');
+  } else if (content.includes('ERC7984')) {
+    if (content.includes('Omnibus')) {
+      analysis.push('This example demonstrates the omnibus pattern for confidential token transfers with encrypted sub-account addresses');
+    } else if (content.includes('Votes') || content.includes('Voting')) {
+      analysis.push('This example implements confidential voting with encrypted vote tracking and delegation');
+    } else if (content.includes('Portfolio') || content.includes('Rebalancer')) {
+      analysis.push('This example demonstrates advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations');
+    } else {
+      analysis.push('This example demonstrates confidential token operations with encrypted balances and transfers');
+    }
+  } else if (content.includes('VestingWallet') || content.includes('vesting')) {
+    analysis.push('This example implements confidential token vesting with encrypted amounts and time-based release');
+  } else if (content.includes('encrypt') && !content.includes('decrypt') && content.includes('externalEuint')) {
+    if (content.includes('multiple') || content.includes('array')) {
+      analysis.push('This example demonstrates encrypting and handling multiple values in a single transaction using external encrypted inputs with input proofs for verification');
+    } else {
+      analysis.push('This example demonstrates the FHE encryption mechanism, showing how to convert external encrypted inputs to internal encrypted values using input proofs');
+    }
+  } else if (fheOps.length > 0) {
+    const opsDesc = fheOps.slice(0, 3).join(', ');
+    analysis.push(`This example demonstrates ${opsDesc} using Fully Homomorphic Encryption`);
+  } else if (content.includes('increment') || content.includes('decrement') || content.includes('counter')) {
+    analysis.push('This example demonstrates building a confidential counter that stores and manipulates encrypted values');
+  } else if (content.includes('encrypt') && content.includes('decrypt')) {
+    analysis.push('This example demonstrates the complete encryption and decryption workflow for confidential data');
+  }
+  
+  // Detect additional features
+  if (content.includes('FHE.allowThis') && content.includes('FHE.allow')) {
+    analysis.push('and shows how to manage FHE permissions for both contracts and users');
+  }
+  
+  if (content.includes('externalEuint') && content.includes('inputProof')) {
+    analysis.push('using external encrypted inputs with input proofs for verification');
+  }
+  
+  return analysis.join(' ');
 }
 
 function extractNatSpecComments(content: string): { title?: string; notice?: string; dev?: string; params: Array<{ name: string; description: string }> } {
@@ -707,9 +949,56 @@ function generateComprehensiveDocSections(
 ): string {
   let sections = '';
   
-  // Overview section
+  // Overview section - use enhanced extraction, fallback to description parameter
   sections += `## Overview\n\n`;
-  sections += `${description}\n\n`;
+  const extractedDescription = extractDescription(contractContent);
+  
+  // Always prefer extracted description if it's substantial (has multiple parts or is comprehensive)
+  // Consider it substantial if it has multiple sentences, is longer than 80 chars, or has multiple clauses
+  const isExtractedSubstantial = extractedDescription && (
+    extractedDescription.length > 80 ||
+    (extractedDescription.match(/\./g) || []).length >= 2 ||
+    extractedDescription.includes(',') && extractedDescription.length > 60 ||
+    extractedDescription.includes('and') && extractedDescription.length > 70
+  );
+  
+  // If extracted is not substantial, enhance description parameter with code analysis
+  let overviewDescription: string;
+  if (isExtractedSubstantial) {
+    overviewDescription = extractedDescription;
+  } else {
+    // Enhance description parameter with code analysis for more comprehensive overview
+    const codeAnalysis = analyzeContractCode(contractContent);
+    if (codeAnalysis.length > 0) {
+      const descLower = description.toLowerCase();
+      const analysisLower = codeAnalysis.toLowerCase();
+      // Check if code analysis adds new information (not already covered in description)
+      const hasNewInfo = !descLower.includes(analysisLower.substring(0, Math.min(40, analysisLower.length))) &&
+                         !analysisLower.includes(descLower.substring(0, Math.min(40, descLower.length)));
+      
+      if (hasNewInfo) {
+        // Combine description parameter with code analysis for comprehensive overview
+        overviewDescription = `${description} ${codeAnalysis}`;
+        // Clean up any duplicate words at the boundary
+        overviewDescription = overviewDescription
+          .replace(/\s+/g, ' ')
+          .replace(/\s*\.\s*\./g, '.')
+          .replace(/\s*,\s*,/g, ',')
+          .trim();
+        // Ensure ends with period
+        if (!overviewDescription.endsWith('.') && !overviewDescription.endsWith('!') && !overviewDescription.endsWith('?')) {
+          overviewDescription += '.';
+        }
+      } else {
+        // Use description if code analysis doesn't add value, but ensure it's comprehensive
+        overviewDescription = description;
+      }
+    } else {
+      overviewDescription = description;
+    }
+  }
+  
+  sections += `${overviewDescription}\n\n`;
   
   // What You'll Learn section
   sections += `## What You'll Learn\n\n`;
