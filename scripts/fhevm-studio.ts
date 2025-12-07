@@ -748,6 +748,11 @@ class FHEVMStudio {
             break;
           }
           
+          case 'update-deps': {
+            await this.updateDependencies();
+            break;
+          }
+          
           case 'cleanup': {
             await this.cleanup();
             break;
