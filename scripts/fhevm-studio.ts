@@ -157,6 +157,7 @@ class FHEVMStudio {
       { name: ' Generate Category Project', value: 'category', description: 'Generate all examples in a category' },
       { name: ' Test Generated Example', value: 'test', description: 'Test an already generated example' },
       { name: ' Generate Documentation', value: 'docs', description: 'Generate documentation for examples' },
+      { name: ' Update Dependencies', value: 'update-deps', description: 'Update package dependencies across examples' },
       { name: ' Cleanup Test Outputs', value: 'cleanup', description: 'Remove test output directories' },
       { name: ' Show Available Examples', value: 'list', description: 'List all available examples' },
       { name: ' Generate All Examples and Test', value: 'generate-all', description: 'Generate all examples with docs and run tests' },
@@ -435,6 +436,154 @@ class FHEVMStudio {
       return true;
     } catch (err: any) {
       error(`Failed to generate documentation: ${err.message}`);
+      return false;
+    }
+  }
+
+  async updateDependencies(): Promise<boolean> {
+    title('Update Dependencies');
+    
+    try {
+      info('Enter package name and version to update');
+      const packageName = await question('Package name (e.g., @fhevm/solidity): ');
+      
+      if (!packageName.trim()) {
+        error('Package name is required');
+        return false;
+      }
+      
+      const version = await question('Version (e.g., ^0.9.1 or 0.3.0-5): ');
+      
+      if (!version.trim()) {
+        error('Version is required');
+        return false;
+      }
+      
+      log('\nSelect update targets:', colors.cyan);
+      const updateAll = await confirm('Update all generated examples (output/ and categories/)?', true);
+      const updateBaseTemplate = await confirm('Update fhevm-hardhat-template?', false);
+      const updateMain = await confirm('Update main project package.json?', false);
+      
+      if (!updateAll && !updateBaseTemplate && !updateMain) {
+        warning('No targets selected. Nothing to update.');
+        return false;
+      }
+      
+      title('Updating Dependencies');
+      
+      const args: string[] = ['--package', packageName.trim(), version.trim()];
+      
+      if (updateAll) {
+        args.push('--all');
+      }
+      
+      if (updateBaseTemplate) {
+        args.push('--base-template');
+      }
+      
+      if (updateMain) {
+        args.push('--main');
+      }
+      
+      info(`Updating ${packageName} to ${version}...`);
+      execSync(`ts-node scripts/update-dependencies.ts ${args.join(' ')}`, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+      
+      success(`Dependencies updated successfully!`);
+      
+      if (updateAll || updateBaseTemplate) {
+        info('\nNote: You may need to run "npm install" in updated directories.');
+        const runInstall = await confirm('Run npm install in updated directories?', false);
+        
+        if (runInstall) {
+          const rootDir = process.cwd();
+          
+          if (updateAll) {
+            // Update output examples
+            if (fs.existsSync(path.join(rootDir, 'output'))) {
+              const outputDirs = fs.readdirSync(path.join(rootDir, 'output')).filter(item => {
+                const fullPath = path.join(rootDir, 'output', item);
+                return fs.statSync(fullPath).isDirectory();
+              });
+              
+              for (const dir of outputDirs) {
+                const dirPath = path.join(rootDir, 'output', dir);
+                if (fs.existsSync(path.join(dirPath, 'package.json'))) {
+                  info(`Running npm install in output/${dir}...`);
+                  try {
+                    execSync('npm install', {
+                      stdio: 'inherit',
+                      cwd: dirPath,
+                    });
+                    success(`✓ output/${dir}`);
+                  } catch (err: any) {
+                    warning(`Failed to install in output/${dir}: ${err.message}`);
+                  }
+                }
+              }
+            }
+            
+            // Update category projects
+            if (fs.existsSync(path.join(rootDir, 'categories'))) {
+              const categoryDirs = fs.readdirSync(path.join(rootDir, 'categories')).filter(item => {
+                const fullPath = path.join(rootDir, 'categories', item);
+                return fs.statSync(fullPath).isDirectory();
+              });
+              
+              for (const dir of categoryDirs) {
+                const dirPath = path.join(rootDir, 'categories', dir);
+                if (fs.existsSync(path.join(dirPath, 'package.json'))) {
+                  info(`Running npm install in categories/${dir}...`);
+                  try {
+                    execSync('npm install', {
+                      stdio: 'inherit',
+                      cwd: dirPath,
+                    });
+                    success(`✓ categories/${dir}`);
+                  } catch (err: any) {
+                    warning(`Failed to install in categories/${dir}: ${err.message}`);
+                  }
+                }
+              }
+            }
+          }
+          
+          if (updateBaseTemplate && fs.existsSync(path.join(rootDir, 'fhevm-hardhat-template'))) {
+            const templatePath = path.join(rootDir, 'fhevm-hardhat-template');
+            if (fs.existsSync(path.join(templatePath, 'package.json'))) {
+              info('Running npm install in fhevm-hardhat-template...');
+              try {
+                execSync('npm install', {
+                  stdio: 'inherit',
+                  cwd: templatePath,
+                });
+                success('✓ fhevm-hardhat-template');
+              } catch (err: any) {
+                warning(`Failed to install in fhevm-hardhat-template: ${err.message}`);
+              }
+            }
+          }
+          
+          if (updateMain) {
+            info('Running npm install in main project...');
+            try {
+              execSync('npm install', {
+                stdio: 'inherit',
+                cwd: rootDir,
+              });
+              success('✓ Main project');
+            } catch (err: any) {
+              warning(`Failed to install in main project: ${err.message}`);
+            }
+          }
+        }
+      }
+      
+      return true;
+    } catch (err: any) {
+      error(`Failed to update dependencies: ${err.message}`);
       return false;
     }
   }
