@@ -39,9 +39,12 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/00Xchriswilder-fhevm-hub/bounty-11.git
+# Clone the repository with submodules
+git clone --recurse-submodules https://github.com/00Xchriswilder-fhevm-hub/bounty-11.git
 cd bounty-11
+
+# OR if you already cloned without submodules:
+git submodule update --init --recursive
 
 # Install dependencies
 npm install
@@ -52,6 +55,8 @@ npx hardhat compile
 # Run tests
 npx hardhat test
 ```
+
+**Note**: The `fhevm-hardhat-template` is included as a git submodule. Use `--recurse-submodules` when cloning, or run `git submodule update --init --recursive` after cloning.
 
 ### Generate a Standalone Example Repository
 
