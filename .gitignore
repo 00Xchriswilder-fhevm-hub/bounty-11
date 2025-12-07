@@ -3,7 +3,6 @@ dist/
 *.log
 .DS_Store
 test-output/
-output/
 coverage/
 .idea/
 .vscode/

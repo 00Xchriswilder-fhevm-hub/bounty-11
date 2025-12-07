@@ -249,7 +249,12 @@ zama-bounty-11/
 │       ├── ConfidentialPortfolioRebalancer.ts (portfolio rebalancing)
 │       ├── ConfidentialLendingPool.ts (confidential lending with collateral and debt)
 │       └── ConfidentialYieldAggregator.ts (confidential yield aggregation)
-├── categories/                 # Generated category projects
+├── output/                     # Generated standalone example repositories
+│   ├── fhe-counter/           # Individual example repos
+│   ├── encrypt-single-value/
+│   ├── erc7984-example/
+│   └── ...                     # 41 total example repositories
+├── categories/                 # Generated category projects (multiple examples per category)
 │   ├── fhevm-examples-basic/
 │   ├── fhevm-examples-access-control/
 │   ├── fhevm-examples-input-proofs/
@@ -263,7 +268,7 @@ zama-bounty-11/
 │   ├── fhevm-studio.ts        # Interactive CLI tool
 │   ├── generate-all-examples-and-test.ts # Batch generation and testing
 │   └── update-dependencies.ts  # Dependency management tool
-├── docs/                       # 41 auto-generated docs
+├── docs/                       # 41 auto-generated GitBook documentation files
 │   └── SUMMARY.md              # Documentation index
 ├── hardhat.config.ts           # Hardhat configuration
 └── README.md                   # This file
@@ -565,7 +570,9 @@ npm run update-dependencies -- --package @fhevm/solidity ^0.9.1 --base-template
    npm run generate-docs example-name
    ```
 
-### Updating Dependencies
+### Maintenance
+
+#### Updating Dependencies
 
 Use the maintenance tool (`update-dependencies.ts`) to update dependencies across all examples:
 
@@ -697,6 +704,47 @@ FHE.allow(encryptedValue, msg.sender); // Missing allowThis - will fail!
 function getValue() external view returns (euint32) { // ❌ Won't work
     return _encryptedValue;
 }
+```
+
+## 🔑 Core Concepts
+
+### FHEVM Encryption Model
+
+FHEVM uses encryption binding where values are bound to [contract, user] pairs:
+
+- **Encryption Binding**: Values encrypted locally, bound to specific contract/user
+- **Input Proofs**: Zero-knowledge proofs attest correct binding
+- **Permission System**: Both contract and user need FHE permissions
+
+### Critical Patterns
+
+**✅ DO: Grant Both Permissions**
+
+```solidity
+FHE.allowThis(encryptedValue);        // Contract permission
+FHE.allow(encryptedValue, msg.sender); // User permission
+```
+
+**❌ DON'T: Forget allowThis**
+
+```solidity
+FHE.allow(encryptedValue, msg.sender); // Missing allowThis - will fail!
+```
+
+**✅ DO: Match Encryption Signer**
+
+```typescript
+const enc = await fhevm.createEncryptedInput(contractAddr, alice.address)
+    .add32(123).encrypt();
+await contract.connect(alice).operate(enc.handles[0], enc.inputProof);
+```
+
+**❌ DON'T: Mismatch Signer**
+
+```typescript
+const enc = await fhevm.createEncryptedInput(contractAddr, alice.address)
+    .add32(123).encrypt();
+await contract.connect(bob).operate(enc.handles[0], enc.inputProof); // Fails!
 ```
 
 ## 🔧 Development Workflow
