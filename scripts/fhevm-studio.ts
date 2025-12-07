@@ -440,26 +440,118 @@ class FHEVMStudio {
     }
   }
 
+  getPackageDescription(packageName: string): string {
+    const descriptions: Record<string, string> = {
+      '@fhevm/solidity': 'Core FHEVM Solidity library',
+      '@fhevm/hardhat-plugin': 'FHEVM Hardhat plugin',
+      '@fhevm/mock-utils': 'FHEVM mock utilities for testing',
+      '@zama-fhe/relayer-sdk': 'Zama FHE relayer SDK',
+      '@openzeppelin/confidential-contracts': 'OpenZeppelin confidential contracts',
+      '@openzeppelin/contracts': 'OpenZeppelin standard contracts',
+      'hardhat': 'Hardhat development environment',
+    };
+    return descriptions[packageName] || 'Package';
+  }
+
+  async getCurrentVersion(packageName: string): Promise<string | null> {
+    const rootDir = process.cwd();
+    const outputDir = path.join(rootDir, 'output');
+    
+    // Try to find the package in any example's package.json
+    if (fs.existsSync(outputDir)) {
+      const exampleDirs = fs.readdirSync(outputDir).filter(item => {
+        const fullPath = path.join(outputDir, item);
+        return fs.statSync(fullPath).isDirectory();
+      });
+      
+      for (const dir of exampleDirs) {
+        const packageJsonPath = path.join(outputDir, dir, 'package.json');
+        if (fs.existsSync(packageJsonPath)) {
+          try {
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+            const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+            if (allDeps[packageName]) {
+              return allDeps[packageName];
+            }
+          } catch (err) {
+            // Continue to next file
+          }
+        }
+      }
+    }
+    
+    // Also check main project and base template
+    const mainPackageJson = path.join(rootDir, 'package.json');
+    if (fs.existsSync(mainPackageJson)) {
+      try {
+        const packageJson = JSON.parse(fs.readFileSync(mainPackageJson, 'utf-8'));
+        const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+        if (allDeps[packageName]) {
+          return allDeps[packageName];
+        }
+      } catch (err) {
+        // Continue
+      }
+    }
+    
+    const templatePackageJson = path.join(rootDir, 'fhevm-hardhat-template', 'package.json');
+    if (fs.existsSync(templatePackageJson)) {
+      try {
+        const packageJson = JSON.parse(fs.readFileSync(templatePackageJson, 'utf-8'));
+        const allDeps = { ...packageJson.dependencies, ...packageJson.devDependencies };
+        if (allDeps[packageName]) {
+          return allDeps[packageName];
+        }
+      } catch (err) {
+        // Continue
+      }
+    }
+    
+    return null;
+  }
+
   async updateDependencies(): Promise<boolean> {
     title('Update Dependencies');
     
     try {
       // Common FHEVM dependencies
-      const commonPackages = [
-        { name: '@fhevm/solidity', value: '@fhevm/solidity', description: 'Core FHEVM Solidity library' },
-        { name: '@fhevm/hardhat-plugin', value: '@fhevm/hardhat-plugin', description: 'FHEVM Hardhat plugin' },
-        { name: '@fhevm/mock-utils', value: '@fhevm/mock-utils', description: 'FHEVM mock utilities for testing' },
-        { name: '@zama-fhe/relayer-sdk', value: '@zama-fhe/relayer-sdk', description: 'Zama FHE relayer SDK' },
-        { name: '@openzeppelin/confidential-contracts', value: '@openzeppelin/confidential-contracts', description: 'OpenZeppelin confidential contracts' },
-        { name: '@openzeppelin/contracts', value: '@openzeppelin/contracts', description: 'OpenZeppelin standard contracts' },
-        { name: 'hardhat', value: 'hardhat', description: 'Hardhat development environment' },
-        { name: 'Custom package', value: 'custom', description: 'Enter a custom package name' },
+      const packageList = [
+        '@fhevm/solidity',
+        '@fhevm/hardhat-plugin',
+        '@fhevm/mock-utils',
+        '@zama-fhe/relayer-sdk',
+        '@openzeppelin/confidential-contracts',
+        '@openzeppelin/contracts',
+        'hardhat',
       ];
+      
+      // Get current versions for each package
+      info('Checking current versions in examples...');
+      const commonPackages = await Promise.all(
+        packageList.map(async (pkg) => {
+          const currentVersion = await this.getCurrentVersion(pkg);
+          const description = this.getPackageDescription(pkg);
+          const versionText = currentVersion ? ` (current: ${currentVersion})` : ' (not found)';
+          return {
+            name: `${pkg}${versionText}`,
+            value: pkg,
+            description: description,
+          };
+        })
+      );
+      
+      commonPackages.push({
+        name: 'Custom package',
+        value: 'custom',
+        description: 'Enter a custom package name',
+      });
       
       log('\nSelect package to update:', colors.cyan);
       const selectedPackage = await selectFromList(commonPackages, 'Choose a package:');
       
       let packageName: string;
+      let currentVersion: string | null = null;
+      
       if (selectedPackage === 'custom') {
         packageName = await question('Enter custom package name: ');
         if (!packageName.trim()) {
@@ -467,11 +559,16 @@ class FHEVMStudio {
           return false;
         }
         packageName = packageName.trim();
+        currentVersion = await this.getCurrentVersion(packageName);
       } else {
         packageName = selectedPackage;
+        currentVersion = await this.getCurrentVersion(packageName);
       }
       
-      const version = await question('\nVersion (e.g., ^0.9.1 or 0.3.0-5): ');
+      const versionPrompt = currentVersion 
+        ? `\nVersion (current: ${currentVersion}, e.g., ^0.9.1 or 0.3.0-5): `
+        : '\nVersion (e.g., ^0.9.1 or 0.3.0-5): ';
+      const version = await question(versionPrompt);
       
       if (!version.trim()) {
         error('Version is required');
