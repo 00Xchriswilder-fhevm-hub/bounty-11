@@ -385,6 +385,15 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     category: 'Advanced',
     chapter: 'advanced',
   },
+  'confidential-yield-aggregator': {
+    title: 'Confidential Yield Aggregator',
+    description: 'Confidential yield aggregation system with multiple strategies, encrypted yield calculations, allocation management, rebalancing based on encrypted yields, and compounding with encrypted values using complex FHE operations.',
+    contract: 'contracts/advanced/ConfidentialYieldAggregator.sol',
+    test: 'test/advanced/ConfidentialYieldAggregator.ts',
+    output: 'docs/confidential-yield-aggregator.md',
+    category: 'Advanced',
+    chapter: 'advanced',
+  },
 };
 
 function readFile(filePath: string): string {

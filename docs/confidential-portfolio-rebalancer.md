@@ -4,7 +4,7 @@
 
 ## Overview
 
-This example shows how to tracking multiple ERC7984 token balances (encrypted), calculating portfolio allocation percentages, comparing current vs target allocations, executing rebalancing trades with encrypted amounts, complex FHE operations: add, mul, sub, div, comparisons. Portfolio: Collection of multiple confidential token balances. Uses plaintext total portfolio value for allocation calculations (acceptable trade-off). This example demonstrates confidential token operations with encrypted balances and transfers and shows how to manage FHE permissions for both contracts and users using external encrypted inputs with input proofs for verification.
+Demonstrates a confidential portfolio management system with automatic rebalancing. This example shows how to tracking multiple ERC7984 token balances (encrypted), calculating portfolio allocation percentages, comparing current vs target allocations, executing rebalancing trades with encrypted amounts, complex FHE operations: add, mul, sub, div, comparisons. Portfolio: Collection of multiple confidential token balances. Uses plaintext total portfolio value for allocation calculations (acceptable trade-off). This example demonstrates confidential token operations with encrypted balances and transfers and shows how to manage FHE permissions for both contracts and users using external encrypted inputs with input proofs for verification.
 
 ## What You'll Learn
 
@@ -47,7 +47,7 @@ Call the function that performs `FHE.add` (e.g., `removeToken()`).
 
 **The Problem:** await expect(
         (portfolio.connect(signers.alice) as any).addToken(tokenA, 4000)
-      ).to.be.revertedWithCustomError(portfolio, "Una...
+      ).to.be.revertedWithCustomError(portfolio, "Unauth...
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -58,7 +58,7 @@ Call the function that performs `FHE.add` (e.g., `removeToken()`).
 **The Problem:** await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000);
 
       await expect(
-        (portfolio.connect(signers.deployer...
+        (portfolio.connect(signers.deployer) as...
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -66,11 +66,7 @@ Call the function that performs `FHE.add` (e.g., `removeToken()`).
 
 ### ❌ Pitfall 3: should fail when withdrawing more than balance
 
-**The Problem:** const depositAmount = 100;
-      const withdrawAmount = 200;
-      const tokenAAddress = await tokenA.getAddress();
-
-      // Mint and dep...
+**The Problem:** Mint and deposit
 
 **Why it fails:** The operation fails due to incorrect usage, permissions, or signer mismatch.
 
@@ -661,20 +657,6 @@ describe("ConfidentialPortfolioRebalancer", function () {
       expect(isActive).to.be.true;
     });
 
-    it("should fail when non-owner tries to add token", async function () {
-      await expect(
-        (portfolio.connect(signers.alice) as any).addToken(tokenA, 4000)
-      ).to.be.revertedWithCustomError(portfolio, "Unauthorized");
-    });
-
-    it("should fail when adding duplicate token", async function () {
-      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000);
-
-      await expect(
-        (portfolio.connect(signers.deployer) as any).addToken(tokenA, 3000)
-      ).to.be.revertedWithCustomError(portfolio, "TokenAlreadyExists");
-    });
-
     it("should allow adding multiple tokens", async function () {
       await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000); // 40%
       await (portfolio.connect(signers.deployer) as any).addToken(tokenB, 3000); // 30%
@@ -703,6 +685,22 @@ describe("ConfidentialPortfolioRebalancer", function () {
         .withArgs(500, newThreshold);
 
       expect(await portfolio.rebalancingThreshold()).to.equal(newThreshold);
+    });
+  });
+
+  describe("❌ Token Management Error Cases", function () {
+    it("should fail when non-owner tries to add token", async function () {
+      await expect(
+        (portfolio.connect(signers.alice) as any).addToken(tokenA, 4000)
+      ).to.be.revertedWithCustomError(portfolio, "Unauthorized");
+    });
+
+    it("should fail when adding duplicate token", async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 4000);
+
+      await expect(
+        (portfolio.connect(signers.deployer) as any).addToken(tokenA, 3000)
+      ).to.be.revertedWithCustomError(portfolio, "TokenAlreadyExists");
     });
   });
 
@@ -805,6 +803,12 @@ describe("ConfidentialPortfolioRebalancer", function () {
       // Check balance is not zero (still has remaining)
       const encryptedBalance = await portfolio.getTokenBalance(0);
       expect(encryptedBalance).to.not.eq(ethers.ZeroHash);
+    });
+  });
+
+  describe("❌ Deposits and Withdrawals Error Cases", function () {
+    beforeEach(async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 10000); // 100%
     });
 
     it("should fail when withdrawing more than balance", async function () {
@@ -1093,6 +1097,12 @@ describe("ConfidentialPortfolioRebalancer", function () {
       // Balance should be reduced (check it's not zero)
       const encryptedBalance = await portfolio.getTokenBalance(0);
       expect(encryptedBalance).to.not.eq(ethers.ZeroHash);
+    });
+  });
+
+  describe("❌ Rebalancing Error Cases", function () {
+    beforeEach(async function () {
+      await (portfolio.connect(signers.deployer) as any).addToken(tokenA, 10000); // 100%
     });
 
     it("should fail when rebalancing is not needed", async function () {

@@ -2,7 +2,7 @@
 ALL CREATE COMMANDS - Zama Bounty 11
 ================================================================================
 
-This file contains all create-example commands for all 39 examples.
+This file contains all create-example commands for all 41 examples.
 Commands are grouped into two categories:
   1. Without --with-docs flag (basic generation)
   2. With --with-docs flag (includes comprehensive documentation)
@@ -61,6 +61,8 @@ npm run create-example simple-voting ./output/simple-voting
 npm run create-example review-cards-fhe ./output/review-cards-fhe
 npm run create-example blind-auction ./output/blind-auction
 npm run create-example confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer
+npm run create-example confidential-lending-pool ./output/confidential-lending-pool
+npm run create-example confidential-yield-aggregator ./output/confidential-yield-aggregator
 
 ================================================================================
 GROUP 2: WITH --with-docs FLAG (Includes Comprehensive Documentation)
@@ -122,6 +124,8 @@ npm run create-example -- simple-voting ./output/simple-voting --with-docs
 npm run create-example -- review-cards-fhe ./output/review-cards-fhe --with-docs
 npm run create-example -- blind-auction ./output/blind-auction --with-docs
 npm run create-example -- confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer --with-docs
+npm run create-example -- confidential-lending-pool ./output/confidential-lending-pool --with-docs
+npm run create-example -- confidential-yield-aggregator ./output/confidential-yield-aggregator --with-docs
 
 ================================================================================
 ALTERNATIVE: Using ts-node directly (Recommended for --with-docs)
@@ -177,6 +181,8 @@ npx ts-node scripts/create-fhevm-example.ts simple-voting ./output/simple-voting
 npx ts-node scripts/create-fhevm-example.ts review-cards-fhe ./output/review-cards-fhe --with-docs
 npx ts-node scripts/create-fhevm-example.ts blind-auction ./output/blind-auction --with-docs
 npx ts-node scripts/create-fhevm-example.ts confidential-portfolio-rebalancer ./output/confidential-portfolio-rebalancer --with-docs
+npx ts-node scripts/create-fhevm-example.ts confidential-lending-pool ./output/confidential-lending-pool --with-docs
+npx ts-node scripts/create-fhevm-example.ts confidential-yield-aggregator ./output/confidential-yield-aggregator --with-docs
 
 ================================================================================
 SUMMARY
@@ -277,8 +283,10 @@ npm run generate-docs erc7984-example
 npm run generate-docs erc7984-omnibus
 npm run generate-docs fhe-legacy-vault
 npm run generate-docs confidential-portfolio-rebalancer
+npm run generate-docs confidential-lending-pool
+npm run generate-docs confidential-yield-aggregator
 
-# Generate ALL documentation (39 files)
+# Generate ALL documentation (41 files)
 npm run generate-all-docs
 
 # Show help
@@ -308,7 +316,7 @@ Available categories:
   - input-proofs (4 examples)
   - anti-patterns (3 examples)
   - openzeppelin (10 examples)
-  - advanced (5 examples)
+  - advanced (7 examples)
 
 What it does:
   1. Generates all examples with --with-docs flag

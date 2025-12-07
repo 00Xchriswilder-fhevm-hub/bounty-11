@@ -110,6 +110,7 @@ const EXAMPLES_BY_CATEGORY: Record<string, ExampleConfig[]> = {
     { name: 'blind-auction', category: 'advanced' },
     { name: 'confidential-portfolio-rebalancer', category: 'advanced' },
     { name: 'confidential-lending-pool', category: 'advanced' },
+    { name: 'confidential-yield-aggregator', category: 'advanced' },
   ],
 };
 

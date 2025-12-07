@@ -10,10 +10,10 @@
 
 This project delivers a complete solution for the Zama Bounty Season 11 challenge: **"Build The FHEVM Example Hub"**. It provides:
 
-- ✅ **40 Standalone Example Contracts** covering all required categories
-- ✅ **40 Comprehensive Test Suites** with success and failure cases
+- ✅ **41 Standalone Example Contracts** covering all required categories
+- ✅ **41 Comprehensive Test Suites** with success and failure cases
 - ✅ **6 Automation Scripts** for scaffolding, documentation generation, batch operations, and maintenance
-- ✅ **40 Auto-Generated Documentation Files** in GitBook format
+- ✅ **41 Auto-Generated Documentation Files** in GitBook format
 - ✅ **6 Category Projects** for generating multi-example repositories
 - ✅ **Base Template Integration** using the official FHEVM Hardhat template
 - ✅ **Factory Pattern Implementation** for OpenZeppelin vesting wallets (production-ready)
@@ -22,9 +22,9 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 40 | ✅ Complete |
-| **Tests** | 40 | ✅ Complete |
-| **Documentation** | 40 | ✅ Complete |
+| **Contracts** | 41 | ✅ Complete |
+| **Tests** | 41 | ✅ Complete |
+| **Documentation** | 41 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
 | **OpenZeppelin Examples** | 10 | ✅ Complete |
@@ -111,7 +111,7 @@ npm run generate-all-and-test -- --category openzeppelin
 ```
 
 **What it does:**
-- Generates all 40 examples with `--with-docs` flag
+- Generates all 41 examples with `--with-docs` flag
 - Automatically changes directory into each output folder
 - Runs `npm test` in each folder (no `npm install` needed)
 - Shows summary of successes/failures
@@ -122,7 +122,7 @@ npm run generate-all-and-test -- --category openzeppelin
 - `input-proofs` (4 examples)
 - `anti-patterns` (3 examples)
 - `openzeppelin` (10 examples)
-- `advanced` (6 examples)
+- `advanced` (7 examples)
 
 ### 🎨 FHEVM Studio (Interactive CLI)
 
@@ -217,13 +217,14 @@ zama-bounty-11/
 │   │   ├── VestingWalletCliffConfidentialFactoryMock.sol (factory pattern)
 │   │   ├── ERC7984VotesMock.sol (confidential voting)
 │   │   └── ERC7984OmnibusMock.sol (omnibus pattern)
-│   └── advanced/               # 6 advanced examples
+│   └── advanced/               # 7 advanced examples
 │       ├── FHELegacyVault.sol
 │       ├── SimpleVoting.sol
 │       ├── ReviewCardsFHE.sol
 │       ├── BlindAuction.sol
 │       ├── ConfidentialPortfolioRebalancer.sol (confidential portfolio rebalancing)
-│       └── ConfidentialLendingPool.sol (confidential lending with collateral and debt)
+│       ├── ConfidentialLendingPool.sol (confidential lending with collateral and debt)
+│       └── ConfidentialYieldAggregator.sol (confidential yield aggregation)
 ├── test/                       # 40 comprehensive test files
 │   ├── basic/                  # 9 test files
 │   ├── access-control/         # 3 test files
@@ -240,13 +241,14 @@ zama-bounty-11/
 │   │   ├── ERC7984VotesExample.ts (confidential voting)
 │   │   ├── ERC7984RwaExample.ts (Real World Assets)
 │   │   └── ERC7984OmnibusExample.ts (omnibus pattern)
-│   └── advanced/                # 6 test files
+│   └── advanced/                # 7 test files
 │       ├── FHELegacyVault.ts
 │       ├── SimpleVoting.ts
 │       ├── ReviewCardsFHE.ts
 │       ├── BlindAuction.ts
 │       ├── ConfidentialPortfolioRebalancer.ts (portfolio rebalancing)
-│       └── ConfidentialLendingPool.ts (confidential lending with collateral and debt)
+│       ├── ConfidentialLendingPool.ts (confidential lending with collateral and debt)
+│       └── ConfidentialYieldAggregator.ts (confidential yield aggregation)
 ├── categories/                 # Generated category projects
 │   ├── fhevm-examples-basic/
 │   ├── fhevm-examples-access-control/
@@ -261,7 +263,7 @@ zama-bounty-11/
 │   ├── fhevm-studio.ts        # Interactive CLI tool
 │   ├── generate-all-examples-and-test.ts # Batch generation and testing
 │   └── update-dependencies.ts  # Dependency management tool
-├── docs/                       # 40 auto-generated docs
+├── docs/                       # 41 auto-generated docs
 │   └── SUMMARY.md              # Documentation index
 ├── hardhat.config.ts           # Hardhat configuration
 └── README.md                   # This file
@@ -318,7 +320,7 @@ zama-bounty-11/
 9. **erc7984-rwa** - ERC7984 RWA (Real World Assets) with compliance features (pause, freeze, block users, force transfers)
 10. **erc7984-omnibus** - ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses
 
-### Advanced Examples (6)
+### Advanced Examples (7)
 
 1. **fhe-legacy-vault** - Time-locked vault with IPFS
 2. **simple-voting** - Confidential voting system
@@ -326,6 +328,7 @@ zama-bounty-11/
 4. **blind-auction** - Confidential blind auction with reveal phase
 5. **confidential-portfolio-rebalancer** - Advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations
 6. **confidential-lending-pool** - Confidential lending system with encrypted collateral, debt tracking, interest calculations, and liquidation logic
+7. **confidential-yield-aggregator** - Confidential yield aggregation with multiple strategies, encrypted yield calculations, allocation management, rebalancing, and compounding
 
 #### Confidential Portfolio Rebalancer - Test Results
 
@@ -422,7 +425,7 @@ npm run create-category <category-name> <output-dir>
 - `input-proofs` - 4 input proof examples (basics, usage, anti-patterns, handles)
 - `anti-patterns` - 3 anti-pattern examples (common mistakes to avoid)
 - `openzeppelin` - 10 OpenZeppelin examples (ERC7984, wrappers, swaps, vesting, voting, RWA, omnibus)
-- `advanced` - 6 advanced examples (vault, voting, rating, blind auction, portfolio rebalancing, lending pool)
+- `advanced` - 7 advanced examples (vault, voting, rating, blind auction, portfolio rebalancing, lending pool, yield aggregator)
 
 **Example:**
 ```bash
@@ -818,9 +821,9 @@ BSD-3-Clause-Clear License
 
 **Overall Progress**: 100% ✅
 
-- ✅ Contracts: 40/40 (100%)
-- ✅ Tests: 40/40 (100%)
-- ✅ Documentation: 40/40 (100%)
+- ✅ Contracts: 41/41 (100%)
+- ✅ Tests: 41/41 (100%)
+- ✅ Documentation: 41/41 (100%)
 - ✅ Automation: 6/6 (100%)
 - ✅ Compilation: All contracts compile successfully
 - ✅ OpenZeppelin Examples: 10/10 (including factory-based vesting wallets, confidential voting, RWA, and omnibus)

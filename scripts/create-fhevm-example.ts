@@ -325,6 +325,13 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     category: 'advanced',
     dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
   },
+  'confidential-yield-aggregator': {
+    contract: 'contracts/advanced/ConfidentialYieldAggregator.sol',
+    test: 'test/advanced/ConfidentialYieldAggregator.ts',
+    description: 'Confidential yield aggregation system with multiple strategies, encrypted yield calculations, allocation management, rebalancing, and compounding using complex FHE operations',
+    category: 'advanced',
+    dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
+  },
 };
 
 function copyDirectoryRecursive(source: string, destination: string): void {
