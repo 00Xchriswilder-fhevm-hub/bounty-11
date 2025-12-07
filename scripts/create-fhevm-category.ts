@@ -135,6 +135,7 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/advanced/ReviewCardsFHE.sol', test: 'test/advanced/ReviewCardsFHE.ts' },
       { path: 'contracts/advanced/BlindAuction.sol', test: 'test/advanced/BlindAuction.ts' },
       { path: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol', test: 'test/advanced/ConfidentialPortfolioRebalancer.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
+      { path: 'contracts/advanced/ConfidentialLendingPool.sol', test: 'test/advanced/ConfidentialLendingPool.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
     ],
   },
 };

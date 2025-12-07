@@ -318,6 +318,13 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     category: 'advanced',
     dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
   },
+  'confidential-lending-pool': {
+    contract: 'contracts/advanced/ConfidentialLendingPool.sol',
+    test: 'test/advanced/ConfidentialLendingPool.ts',
+    description: 'Confidential lending system with encrypted collateral, debt tracking, interest calculations, and liquidation logic using complex FHE operations',
+    category: 'advanced',
+    dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
+  },
 };
 
 function copyDirectoryRecursive(source: string, destination: string): void {

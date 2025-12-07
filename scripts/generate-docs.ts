@@ -376,6 +376,15 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     category: 'Advanced',
     chapter: 'advanced',
   },
+  'confidential-lending-pool': {
+    title: 'Confidential Lending Pool',
+    description: 'Confidential lending system with encrypted collateral, debt tracking, interest calculations, and liquidation logic using complex FHE operations including add, mul, div, and comparisons.',
+    contract: 'contracts/advanced/ConfidentialLendingPool.sol',
+    test: 'test/advanced/ConfidentialLendingPool.ts',
+    output: 'docs/confidential-lending-pool.md',
+    category: 'Advanced',
+    chapter: 'advanced',
+  },
 };
 
 function readFile(filePath: string): string {

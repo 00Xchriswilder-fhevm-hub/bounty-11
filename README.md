@@ -122,7 +122,7 @@ npm run generate-all-and-test -- --category openzeppelin
 - `input-proofs` (4 examples)
 - `anti-patterns` (3 examples)
 - `openzeppelin` (10 examples)
-- `advanced` (5 examples)
+- `advanced` (6 examples)
 
 ### 🎨 FHEVM Studio (Interactive CLI)
 
@@ -217,11 +217,13 @@ zama-bounty-11/
 │   │   ├── VestingWalletCliffConfidentialFactoryMock.sol (factory pattern)
 │   │   ├── ERC7984VotesMock.sol (confidential voting)
 │   │   └── ERC7984OmnibusMock.sol (omnibus pattern)
-│   └── advanced/               # 5 advanced examples
+│   └── advanced/               # 6 advanced examples
 │       ├── FHELegacyVault.sol
 │       ├── SimpleVoting.sol
 │       ├── ReviewCardsFHE.sol
 │       ├── BlindAuction.sol
+│       ├── ConfidentialPortfolioRebalancer.sol (confidential portfolio rebalancing)
+│       └── ConfidentialLendingPool.sol (confidential lending with collateral and debt)
 │       └── ConfidentialPortfolioRebalancer.sol (portfolio rebalancing)
 ├── test/                       # 33 comprehensive test files
 │   ├── basic/                  # 9 test files
@@ -239,12 +241,13 @@ zama-bounty-11/
 │   │   ├── ERC7984VotesExample.ts (confidential voting)
 │   │   ├── ERC7984RwaExample.ts (Real World Assets)
 │   │   └── ERC7984OmnibusExample.ts (omnibus pattern)
-│   └── advanced/                # 5 test files
+│   └── advanced/                # 6 test files
 │       ├── FHELegacyVault.ts
 │       ├── SimpleVoting.ts
 │       ├── ReviewCardsFHE.ts
 │       ├── BlindAuction.ts
-│       └── ConfidentialPortfolioRebalancer.ts (portfolio rebalancing)
+│       ├── ConfidentialPortfolioRebalancer.ts (portfolio rebalancing)
+│       └── ConfidentialLendingPool.ts (confidential lending with collateral and debt)
 ├── categories/                 # Generated category projects
 │   ├── fhevm-examples-basic/
 │   ├── fhevm-examples-access-control/
@@ -259,7 +262,7 @@ zama-bounty-11/
 │   ├── fhevm-studio.ts        # Interactive CLI tool
 │   ├── generate-all-examples-and-test.ts # Batch generation and testing
 │   └── update-dependencies.ts  # Dependency management tool
-├── docs/                       # 38 auto-generated docs
+├── docs/                       # 40 auto-generated docs
 │   └── SUMMARY.md              # Documentation index
 ├── hardhat.config.ts           # Hardhat configuration
 └── README.md                   # This file
@@ -316,13 +319,14 @@ zama-bounty-11/
 9. **erc7984-rwa** - ERC7984 RWA (Real World Assets) with compliance features (pause, freeze, block users, force transfers)
 10. **erc7984-omnibus** - ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses
 
-### Advanced Examples (5)
+### Advanced Examples (6)
 
 1. **fhe-legacy-vault** - Time-locked vault with IPFS
 2. **simple-voting** - Confidential voting system
 3. **review-cards-fhe** - Encrypted rating system
 4. **blind-auction** - Confidential blind auction with reveal phase
 5. **confidential-portfolio-rebalancer** - Advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations
+6. **confidential-lending-pool** - Confidential lending system with encrypted collateral, debt tracking, interest calculations, and liquidation logic
 
 #### Confidential Portfolio Rebalancer - Test Results
 
@@ -419,7 +423,7 @@ npm run create-category <category-name> <output-dir>
 - `input-proofs` - 4 input proof examples (basics, usage, anti-patterns, handles)
 - `anti-patterns` - 3 anti-pattern examples (common mistakes to avoid)
 - `openzeppelin` - 10 OpenZeppelin examples (ERC7984, wrappers, swaps, vesting, voting, RWA, omnibus)
-- `advanced` - 5 advanced examples (vault, voting, rating, blind auction, portfolio rebalancing)
+- `advanced` - 6 advanced examples (vault, voting, rating, blind auction, portfolio rebalancing, lending pool)
 
 **Example:**
 ```bash
@@ -732,10 +736,10 @@ The base template is cloned, so dependencies are managed per generated repositor
 
 ## 🎯 Key Achievements
 
-1. **38 Contracts Created** - All required categories covered
-2. **38 Test Suites** - Comprehensive coverage with success/failure cases
+1. **40 Contracts Created** - All required categories covered
+2. **40 Test Suites** - Comprehensive coverage with success/failure cases
 3. **6 Automation Scripts** - Fully functional scaffolding, batch generation, and maintenance tools
-4. **38 Documentation Files** - Auto-generated GitBook-compatible docs
+4. **40 Documentation Files** - Auto-generated GitBook-compatible docs
 5. **100% Compilation Success** - All contracts compile without errors
 6. **Educational Value** - Well-commented code explaining FHEVM concepts
 7. **Production-Ready Patterns** - Factory-based vesting wallets using OpenZeppelin's recommended clone pattern
