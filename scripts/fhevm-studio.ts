@@ -444,15 +444,34 @@ class FHEVMStudio {
     title('Update Dependencies');
     
     try {
-      info('Enter package name and version to update');
-      const packageName = await question('Package name (e.g., @fhevm/solidity): ');
+      // Common FHEVM dependencies
+      const commonPackages = [
+        { name: '@fhevm/solidity', value: '@fhevm/solidity', description: 'Core FHEVM Solidity library' },
+        { name: '@fhevm/hardhat-plugin', value: '@fhevm/hardhat-plugin', description: 'FHEVM Hardhat plugin' },
+        { name: '@fhevm/mock-utils', value: '@fhevm/mock-utils', description: 'FHEVM mock utilities for testing' },
+        { name: '@zama-fhe/relayer-sdk', value: '@zama-fhe/relayer-sdk', description: 'Zama FHE relayer SDK' },
+        { name: '@openzeppelin/confidential-contracts', value: '@openzeppelin/confidential-contracts', description: 'OpenZeppelin confidential contracts' },
+        { name: '@openzeppelin/contracts', value: '@openzeppelin/contracts', description: 'OpenZeppelin standard contracts' },
+        { name: 'hardhat', value: 'hardhat', description: 'Hardhat development environment' },
+        { name: 'Custom package', value: 'custom', description: 'Enter a custom package name' },
+      ];
       
-      if (!packageName.trim()) {
-        error('Package name is required');
-        return false;
+      log('\nSelect package to update:', colors.cyan);
+      const selectedPackage = await selectFromList(commonPackages, 'Choose a package:');
+      
+      let packageName: string;
+      if (selectedPackage === 'custom') {
+        packageName = await question('Enter custom package name: ');
+        if (!packageName.trim()) {
+          error('Package name is required');
+          return false;
+        }
+        packageName = packageName.trim();
+      } else {
+        packageName = selectedPackage;
       }
       
-      const version = await question('Version (e.g., ^0.9.1 or 0.3.0-5): ');
+      const version = await question('\nVersion (e.g., ^0.9.1 or 0.3.0-5): ');
       
       if (!version.trim()) {
         error('Version is required');
