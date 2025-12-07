@@ -724,53 +724,186 @@ function extractMainOperation(contractContent: string): string | null {
   return null;
 }
 
-// Helper function to extract key concepts from contract code - example-specific
+// Helper function to extract "What You'll Learn" from contract comments
+function extractWhatYoullLearn(contractContent: string): string[] {
+  const learnItems: string[] = [];
+  
+  // Helper to clean comment lines
+  const cleanLine = (line: string): string => {
+    return line
+      .replace(/^\s*\*\s*/, '')           // Remove leading * and spaces
+      .replace(/^\/\/\/\s*/, '')          // Remove leading ///
+      .replace(/^-\s*/, '')                // Remove leading -
+      .replace(/^\s*[-•]\s*/, '')          // Remove leading bullet points
+      .trim();
+  };
+  
+  // Extract from @dev "This contract demonstrates:" section
+  // Match multiline pattern - look for lines with /// and dashes
+  const demonstratesMatch = contractContent.match(/@dev\s+This\s+(?:contract\s+)?(?:demonstrates|shows):([\s\S]*?)(?=\/\/\/\s*@dev\s+(?:Key Concepts|Educational Notes)|@dev\s+(?:Key Concepts|Educational Notes)|$)/i);
+  if (demonstratesMatch) {
+    const demoSection = demonstratesMatch[1];
+    // Split by lines and extract bullet points (lines with /// and -)
+    const lines = demoSection.split('\n');
+    
+    lines.forEach(line => {
+      // Look for lines like: ///      - Multiple yield strategies...
+      const bulletMatch = line.match(/\/\/\/\s*-\s*(.+)/);
+      if (bulletMatch) {
+        const item = bulletMatch[1].trim();
+        if (item.length > 15 && !item.toLowerCase().includes('complex fhe operations')) {
+          // Capitalize first letter
+          const formatted = item.charAt(0).toUpperCase() + item.slice(1);
+          // Format as learning item - use the full text as description
+          // Extract a short concept name from the beginning
+          const words = formatted.split(/\s+/);
+          if (words.length >= 4) {
+            // Use first 2-3 words as concept name, rest as description
+            const conceptWords = words.slice(0, 3).join(' ');
+            const description = words.slice(3).join(' ');
+            learnItems.push(`**${conceptWords}** - ${description}`);
+          } else if (words.length >= 2) {
+            // For shorter items, use first word as concept, rest as description
+            const conceptWord = words[0];
+            const description = words.slice(1).join(' ');
+            learnItems.push(`**${conceptWord}** - ${description}`);
+          } else {
+            learnItems.push(`**${formatted}**`);
+          }
+        }
+      }
+    });
+  }
+  
+  // If we didn't get enough items, fall back to detecting FHE operations
+  if (learnItems.length < 2) {
+    const mainOp = extractMainOperation(contractContent);
+    if (mainOp && !learnItems.some(item => item.includes(mainOp))) {
+      learnItems.push(`**${mainOp} operation** - How to perform this specific homomorphic operation on encrypted values`);
+    }
+    
+    if (contractContent.includes('FHE.fromExternal') && !learnItems.some(item => item.includes('encryption'))) {
+      learnItems.push('**Off-chain encryption** - Encrypting values locally before sending to contract');
+    }
+    
+    if ((contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) && 
+        !learnItems.some(item => item.includes('permission'))) {
+      learnItems.push('**FHE permissions** - Granting permissions for operations and decryption');
+    }
+  }
+  
+  return learnItems;
+}
+
+// Helper function to extract key concepts from contract comments
+function extractKeyConceptsFromComments(contractContent: string): Array<{ title: string; description: string }> {
+  const concepts: Array<{ title: string; description: string }> = [];
+  
+  // Helper to clean comment lines
+  const cleanLine = (line: string): string => {
+    return line
+      .replace(/^\s*\*\s*/, '')           // Remove leading * and spaces
+      .replace(/^\/\/\/\s*/, '')          // Remove leading ///
+      .replace(/^-\s*/, '')                // Remove leading -
+      .replace(/^\s*[-•]\s*/, '')          // Remove leading bullet points
+      .trim();
+  };
+  
+  // Extract from @dev "Key Concepts:" section
+  // Match multiline pattern - look for lines with /// and dashes
+  const keyConceptsMatch = contractContent.match(/@dev\s+Key\s+Concepts:([\s\S]*?)(?=\/\/\/\s*@dev\s+Educational|@dev\s+Educational|$)/i);
+  if (keyConceptsMatch) {
+    const conceptSection = keyConceptsMatch[1];
+    const lines = conceptSection.split('\n');
+    
+    lines.forEach((line) => {
+      // Look for lines like: ///      - Strategy: A yield-generating mechanism...
+      const bulletMatch = line.match(/\/\/\/\s*-\s*(.+)/);
+      if (bulletMatch) {
+        const item = bulletMatch[1].trim();
+        if (item.length > 15) {
+          // Parse format: "Concept Name: Description"
+          const colonIndex = item.indexOf(':');
+          if (colonIndex > 0) {
+            const title = item.substring(0, colonIndex).trim();
+            const description = item.substring(colonIndex + 1).trim();
+            if (title.length > 3 && description.length > 10) {
+              concepts.push({ title, description });
+            }
+          } else {
+            // If no colon, use first word as title, rest as description
+            const words = item.split(/\s+/);
+            if (words.length > 2) {
+              const title = words[0];
+              const description = words.slice(1).join(' ');
+              concepts.push({ title, description });
+            } else {
+              concepts.push({ title: item, description: item });
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // If we didn't get concepts from comments, fall back to generic based on operations
+  if (concepts.length === 0) {
+    const mainOp = extractMainOperation(contractContent);
+    if (mainOp) {
+      const opDescriptions: Record<string, string> = {
+        'FHE.min': 'The `FHE.min()` function compares two encrypted values and returns the smaller one, all without decrypting either value.',
+        'FHE.max': 'The `FHE.max()` function compares two encrypted values and returns the larger one, all without decrypting either value.',
+        'FHE.add': 'The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.',
+        'FHE.sub': 'The `FHE.sub()` function performs subtraction on encrypted values, computing the difference without decrypting.',
+        'FHE.mul': 'The `FHE.mul()` function performs multiplication on encrypted values, computing the product without decrypting.',
+        'FHE.div': 'The `FHE.div()` function performs division on encrypted values, computing the quotient without decrypting.',
+      };
+      concepts.push({
+        title: `${mainOp} Operation`,
+        description: opDescriptions[mainOp] || `The ${mainOp} function performs operations on encrypted values without decrypting them.`
+      });
+    }
+    
+    if (contractContent.includes('FHE.fromExternal')) {
+      concepts.push({
+        title: 'Off-Chain Encryption',
+        description: 'Values are encrypted locally (on the client side) before being sent to the contract: plaintext values never appear in transactions, encryption is cryptographically bound to [contract, user] pair, and input proofs verify the binding.'
+      });
+    }
+    
+    if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
+      concepts.push({
+        title: 'FHE Permissions',
+        description: 'Permissions control who can perform operations (contracts need `FHE.allowThis()`) and decrypt values (users need `FHE.allow()`).'
+      });
+    }
+  }
+  
+  return concepts;
+}
+
+// Helper function to extract key concepts from contract code - example-specific (fallback)
 function extractKeyConcepts(contractContent: string, testContent: string, config: DocsConfig): string[] {
+  // First try to extract from contract comments
+  const learnItems = extractWhatYoullLearn(contractContent);
+  if (learnItems.length > 0) {
+    return learnItems;
+  }
+  
+  // Fallback to old logic if no comments found
   const concepts: string[] = [];
   const mainOp = extractMainOperation(contractContent);
   
-  // Example-specific operation
   if (mainOp) {
     concepts.push(`**${mainOp} operation** - How to perform this specific homomorphic operation on encrypted values`);
   }
   
-  // Only add encryption concepts if the example actually uses external encryption
   if (contractContent.includes('FHE.fromExternal') || testContent.includes('createEncryptedInput')) {
     concepts.push('**Off-chain encryption** - Encrypting values locally before sending to contract');
   }
   
-  // Only add permission concepts if permissions are actually used
   if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
     concepts.push('**FHE permissions** - Granting permissions for operations and decryption');
-  }
-  
-  // Only add decryption concepts if decryption is actually used
-  if (testContent.includes('userDecrypt')) {
-    concepts.push('**User decryption** - Decrypting results for authorized users');
-  }
-  
-  if (contractContent.includes('makePubliclyDecryptable') || testContent.includes('publicDecrypt')) {
-    concepts.push('**Public decryption** - Making results publicly decryptable');
-  }
-  
-  // Example-specific concepts based on category
-  if (config.category.includes('ERC7984')) {
-    concepts.push('**Confidential tokens** - Working with encrypted token balances and transfers');
-  }
-  
-  // Omnibus-specific concepts
-  if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
-    concepts.push('**Omnibus pattern** - Onchain settlement between omnibus accounts with off-chain sub-account tracking');
-    concepts.push('**Encrypted addresses** - Encrypting sub-account sender and recipient addresses for privacy');
-    concepts.push('**OmnibusConfidentialTransfer events** - Event emission with encrypted addresses for off-chain tracking');
-  }
-  
-  if (config.category.includes('Voting')) {
-    concepts.push('**Confidential voting** - Encrypted votes and private tallies');
-  }
-  
-  if (config.category.includes('Vesting')) {
-    concepts.push('**Time-based vesting** - Encrypted vesting schedules');
   }
   
   return concepts;
@@ -886,31 +1019,48 @@ function generateComprehensiveSections(
   
   sections += `${overviewDescription}\n\n`;
   
-  // What You'll Learn section - example-specific
+  // What You'll Learn section - extract from contract comments
   sections += `## What You'll Learn\n\n`;
-  const keyConcepts = extractKeyConcepts(contractContent, testContent, config);
-  if (keyConcepts.length > 0) {
-    keyConcepts.forEach(concept => {
-      sections += `- ${concept}\n`;
+  const learnItems = extractWhatYoullLearn(contractContent);
+  if (learnItems.length > 0) {
+    learnItems.forEach(item => {
+      sections += `- ${item}\n`;
     });
+  } else {
+    // Fallback to old method if no comments found
+    const keyConcepts = extractKeyConcepts(contractContent, testContent, config);
+    if (keyConcepts.length > 0) {
+      keyConcepts.forEach(concept => {
+        sections += `- ${concept}\n`;
+      });
+    }
   }
   sections += `\n`;
   
-  // Key Concepts section - only include what's relevant
-  const mainOp = extractMainOperation(contractContent);
+  // Key Concepts section - extract from contract comments
+  const keyConceptsFromComments = extractKeyConceptsFromComments(contractContent);
+  const mainOp = extractMainOperation(contractContent); // Define mainOp here for use later
   let conceptNum = 1;
   
   sections += `## Key Concepts\n\n`;
   
-  // Main operation concept (most important)
-  if (mainOp) {
-    const opDescriptions: Record<string, string> = {
-      'FHE.min': 'The `FHE.min()` function compares two encrypted values and returns the smaller one, all without decrypting either value.',
-      'FHE.max': 'The `FHE.max()` function compares two encrypted values and returns the larger one, all without decrypting either value.',
-      'FHE.add': 'The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.',
-      'FHE.sub': 'The `FHE.sub()` function performs subtraction on encrypted values, computing the difference without decrypting.',
-      'FHE.mul': 'The `FHE.mul()` function performs multiplication on encrypted values, computing the product without decrypting.',
-      'FHE.div': 'The `FHE.div()` function performs division on encrypted values, computing the quotient without decrypting.',
+  // Use concepts from contract comments if available
+  if (keyConceptsFromComments.length > 0) {
+    keyConceptsFromComments.forEach(concept => {
+      sections += `### ${conceptNum}. ${concept.title}\n\n`;
+      sections += `${concept.description}\n\n`;
+      conceptNum++;
+    });
+  } else {
+    // Fallback to generic concepts based on operations
+    if (mainOp) {
+      const opDescriptions: Record<string, string> = {
+        'FHE.min': 'The `FHE.min()` function compares two encrypted values and returns the smaller one, all without decrypting either value.',
+        'FHE.max': 'The `FHE.max()` function compares two encrypted values and returns the larger one, all without decrypting either value.',
+        'FHE.add': 'The `FHE.add()` function performs addition on encrypted values, computing the sum without ever decrypting the operands.',
+        'FHE.sub': 'The `FHE.sub()` function performs subtraction on encrypted values, computing the difference without decrypting.',
+        'FHE.mul': 'The `FHE.mul()` function performs multiplication on encrypted values, computing the product without decrypting.',
+        'FHE.div': 'The `FHE.div()` function performs division on encrypted values, computing the quotient without decrypting.',
       'FHE.xor': 'The `FHE.xor()` function performs bitwise XOR on encrypted values, computing the result without decrypting.',
       'FHE.and': 'The `FHE.and()` function performs bitwise AND on encrypted values.',
       'FHE.or': 'The `FHE.or()` function performs bitwise OR on encrypted values.',
@@ -918,28 +1068,29 @@ function generateComprehensiveSections(
       'FHE.select': 'The `FHE.select()` function performs conditional selection (if-then-else) on encrypted values based on an encrypted boolean condition.',
     };
     
-    sections += `### ${conceptNum}. ${mainOp} Operation\n\n`;
-    sections += `${opDescriptions[mainOp] || `The \`${mainOp}\` function performs homomorphic operations on encrypted values without decrypting them.`}\n\n`;
-    conceptNum++;
-  }
-  
-  // Only add encryption if actually used
-  if (contractContent.includes('FHE.fromExternal') || testContent.includes('createEncryptedInput')) {
-    sections += `### ${conceptNum}. Off-Chain Encryption\n\n`;
-    sections += `Values are encrypted **locally** (on the client side) before being sent to the contract:\n`;
-    sections += `- Plaintext values never appear in transactions\n`;
-    sections += `- Encryption is cryptographically bound to [contract, user] pair\n`;
-    sections += `- Input proofs verify the binding\n\n`;
-    conceptNum++;
-  }
-  
-  // Only add permissions if actually used
-  if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
-    sections += `### ${conceptNum}. FHE Permissions\n\n`;
-    sections += `Permissions control who can:\n`;
-    sections += `- **Perform operations**: Contracts need \`FHE.allowThis()\`\n`;
-    sections += `- **Decrypt values**: Users need \`FHE.allow()\`\n\n`;
-    conceptNum++;
+      sections += `### ${conceptNum}. ${mainOp} Operation\n\n`;
+      sections += `${opDescriptions[mainOp] || `The \`${mainOp}\` function performs homomorphic operations on encrypted values without decrypting them.`}\n\n`;
+      conceptNum++;
+      
+      // Only add encryption if actually used
+      if (contractContent.includes('FHE.fromExternal') || testContent.includes('createEncryptedInput')) {
+        sections += `### ${conceptNum}. Off-Chain Encryption\n\n`;
+        sections += `Values are encrypted **locally** (on the client side) before being sent to the contract:\n`;
+        sections += `- Plaintext values never appear in transactions\n`;
+        sections += `- Encryption is cryptographically bound to [contract, user] pair\n`;
+        sections += `- Input proofs verify the binding\n\n`;
+        conceptNum++;
+      }
+      
+      // Only add permissions if actually used
+      if (contractContent.includes('FHE.allowThis') || contractContent.includes('FHE.allow')) {
+        sections += `### ${conceptNum}. FHE Permissions\n\n`;
+        sections += `Permissions control who can:\n`;
+        sections += `- **Perform operations**: Contracts need \`FHE.allowThis()\`\n`;
+        sections += `- **Decrypt values**: Users need \`FHE.allow()\`\n\n`;
+        conceptNum++;
+      }
+    }
   }
   
   // Omnibus-specific concepts
