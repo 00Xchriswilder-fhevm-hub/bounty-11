@@ -136,6 +136,30 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     description: 'Demonstrates FHE.and, FHE.or, and FHE.not operations',
     category: 'basic',
   },
+  'fhe-sub': {
+    contract: 'contracts/basic/fhe-operations/FHESub.sol',
+    test: 'test/basic/fhe-operations/FHESub.ts',
+    description: 'Demonstrates FHE.sub operation to subtract two encrypted values',
+    category: 'basic',
+  },
+  'fhe-rem': {
+    contract: 'contracts/basic/fhe-operations/FHERem.sol',
+    test: 'test/basic/fhe-operations/FHERem.ts',
+    description: 'Demonstrates FHE.rem operation to compute remainder of encrypted value by plaintext modulus',
+    category: 'basic',
+  },
+  'fhe-max': {
+    contract: 'contracts/basic/fhe-operations/FHEMax.sol',
+    test: 'test/basic/fhe-operations/FHEMax.ts',
+    description: 'Demonstrates FHE.max operation to find maximum of two encrypted values',
+    category: 'basic',
+  },
+  'fhe-comparison': {
+    contract: 'contracts/basic/fhe-operations/FHEComparison.sol',
+    test: 'test/basic/fhe-operations/FHEComparison.ts',
+    description: 'Demonstrates all FHE comparison operations (eq, ne, gt, lt, ge, le) and conditional selection',
+    category: 'basic',
+  },
   // Access Control Examples
   'access-control': {
     contract: 'contracts/access-control/AccessControl.sol',
@@ -762,6 +786,7 @@ function analyzeContractCode(content: string): string {
     { pattern: /FHE\.sub\(/g, name: 'FHE.sub', desc: 'subtracting encrypted values' },
     { pattern: /FHE\.mul\(/g, name: 'FHE.mul', desc: 'multiplying encrypted values' },
     { pattern: /FHE\.div\(/g, name: 'FHE.div', desc: 'dividing encrypted values' },
+    { pattern: /FHE\.rem\(/g, name: 'FHE.rem', desc: 'remainder/modulo operations' },
     { pattern: /FHE\.xor\(/g, name: 'FHE.xor', desc: 'bitwise XOR operations' },
     { pattern: /FHE\.and\(/g, name: 'FHE.and', desc: 'bitwise AND operations' },
     { pattern: /FHE\.or\(/g, name: 'FHE.or', desc: 'bitwise OR operations' },

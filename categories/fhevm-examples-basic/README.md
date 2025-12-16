@@ -4,7 +4,7 @@ Fundamental FHEVM operations including encryption, decryption, and basic FHE ope
 
 ## 📦 Included Examples
 
-This project contains 14 example contracts:
+This project contains 18 example contracts:
 
 1. **FHECounter**
 2. **EncryptSingleValue**
@@ -20,6 +20,10 @@ This project contains 14 example contracts:
 12. **FHEXor**
 13. **FHEDiv**
 14. **FHEBitwise**
+15. **FHESub**
+16. **FHERem**
+17. **FHEMax**
+18. **FHEComparison**
 
 ## Quick Start
 
@@ -185,6 +189,42 @@ Run specific tests:
 npx hardhat test test/FHEBitwise.ts
 ```
 
+### FHESub
+
+Located in `contracts/FHESub.sol`
+
+Run specific tests:
+```bash
+npx hardhat test test/FHESub.ts
+```
+
+### FHERem
+
+Located in `contracts/FHERem.sol`
+
+Run specific tests:
+```bash
+npx hardhat test test/FHERem.ts
+```
+
+### FHEMax
+
+Located in `contracts/FHEMax.sol`
+
+Run specific tests:
+```bash
+npx hardhat test test/FHEMax.ts
+```
+
+### FHEComparison
+
+Located in `contracts/FHEComparison.sol`
+
+Run specific tests:
+```bash
+npx hardhat test test/FHEComparison.ts
+```
+
 
 ## Deployment
 
@@ -219,6 +259,10 @@ npx hardhat verify --network sepolia <FHEMUL_ADDRESS>
 npx hardhat verify --network sepolia <FHEXOR_ADDRESS>
 npx hardhat verify --network sepolia <FHEDIV_ADDRESS>
 npx hardhat verify --network sepolia <FHEBITWISE_ADDRESS>
+npx hardhat verify --network sepolia <FHESUB_ADDRESS>
+npx hardhat verify --network sepolia <FHEREM_ADDRESS>
+npx hardhat verify --network sepolia <FHEMAX_ADDRESS>
+npx hardhat verify --network sepolia <FHECOMPARISON_ADDRESS>
 ```
 
 ## Available Scripts

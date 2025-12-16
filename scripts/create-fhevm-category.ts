@@ -76,6 +76,10 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/basic/fhe-operations/FHEXor.sol', test: 'test/basic/fhe-operations/FHEXor.ts' },
       { path: 'contracts/basic/fhe-operations/FHEDiv.sol', test: 'test/basic/fhe-operations/FHEDiv.ts' },
       { path: 'contracts/basic/fhe-operations/FHEBitwise.sol', test: 'test/basic/fhe-operations/FHEBitwise.ts' },
+      { path: 'contracts/basic/fhe-operations/FHESub.sol', test: 'test/basic/fhe-operations/FHESub.ts' },
+      { path: 'contracts/basic/fhe-operations/FHERem.sol', test: 'test/basic/fhe-operations/FHERem.ts' },
+      { path: 'contracts/basic/fhe-operations/FHEMax.sol', test: 'test/basic/fhe-operations/FHEMax.ts' },
+      { path: 'contracts/basic/fhe-operations/FHEComparison.sol', test: 'test/basic/fhe-operations/FHEComparison.ts' },
     ],
   },
   'access-control': {

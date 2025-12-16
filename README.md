@@ -6,18 +6,15 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D20-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 
-## 🎥 Video Demo
-
-[![YouTube](https://img.shields.io/badge/YouTube-Demo%20Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=l8n3BQUJEtA)
 
 ## 🎯 Project Overview
 
 This project delivers a complete solution for the Zama Bounty Season 11 challenge: **"Build The FHEVM Example Hub"**. It provides:
 
-- ✅ **41 Standalone Example Contracts** covering all required categories
-- ✅ **41 Comprehensive Test Suites** with success and failure cases
+- ✅ **45 Standalone Example Contracts** covering all required categories
+- ✅ **45 Comprehensive Test Suites** with success and failure cases
 - ✅ **6 Automation Scripts** for scaffolding, documentation generation, batch operations, and maintenance
-- ✅ **41 Auto-Generated Documentation Files** in GitBook format
+- ✅ **45 Auto-Generated Documentation Files** in GitBook format
 - ✅ **6 Category Projects** for generating multi-example repositories
 - ✅ **Base Template Integration** using the official FHEVM Hardhat template
 - ✅ **Factory Pattern Implementation** for OpenZeppelin vesting wallets (production-ready)
@@ -26,9 +23,9 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 41 | ✅ Complete |
-| **Tests** | 41 | ✅ Complete |
-| **Documentation** | 41 | ✅ Complete |
+| **Contracts** | 45 | ✅ Complete |
+| **Tests** | 45 | ✅ Complete |
+| **Documentation** | 45 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
 | **OpenZeppelin Examples** | 10 | ✅ Complete |
@@ -85,7 +82,7 @@ npm run create-category basic
 npm run create-category basic ./my-custom-path/basic-examples
 
 # Available categories:
-# - basic (14 examples)
+# - basic (18 examples)
 # - access-control (3 examples)
 # - input-proofs (4 examples)
 # - anti-patterns (3 examples)
@@ -120,13 +117,13 @@ npm run generate-all-and-test -- --category openzeppelin
 ```
 
 **What it does:**
-- Generates all 41 examples with `--with-docs` flag
+- Generates all 45 examples with `--with-docs` flag
 - Automatically changes directory into each output folder
 - Runs `npm test` in each folder (no `npm install` needed)
 - Shows summary of successes/failures
 
 **Available categories:**
-- `basic` (14 examples)
+- `basic` (18 examples)
 - `access-control` (3 examples)
 - `input-proofs` (4 examples)
 - `anti-patterns` (3 examples)
@@ -262,7 +259,7 @@ zama-bounty-11/
 │   ├── fhe-counter/           # Individual example repos
 │   ├── encrypt-single-value/
 │   ├── erc7984-example/
-│   └── ...                     # 41 total example repositories
+│   └── ...                     # 45 total example repositories
 ├── categories/                 # Generated category projects (multiple examples per category)
 │   ├── fhevm-examples-basic/
 │   ├── fhevm-examples-access-control/
@@ -285,7 +282,7 @@ zama-bounty-11/
 
 ## 📚 Available Examples
 
-### Basic Examples (15)
+### Basic Examples (18)
 
 1. **fhe-counter** - Simple encrypted counter
 2. **fhe-encrypt-single-value** - Single value encryption
@@ -295,12 +292,16 @@ zama-bounty-11/
 6. **fhe-public-decrypt-single-value** - Public decryption (single)
 7. **fhe-public-decrypt-multiple-values** - Public decryption (multiple)
 8. **fhe-add** - FHE addition operations
-9. **fhe-if-then-else** - Conditional FHE operations
-10. **fhe-min** - FHE minimum operation
-11. **fhe-mul** - FHE multiplication operation
-12. **fhe-xor** - FHE bitwise XOR operation
-13. **fhe-div** - FHE division operation
-14. **fhe-bitwise** - FHE bitwise operations (AND, OR, NOT)
+9. **fhe-sub** - FHE subtraction operations
+10. **fhe-mul** - FHE multiplication operation
+11. **fhe-div** - FHE division operation
+12. **fhe-rem** - FHE remainder/modulo operation
+13. **fhe-min** - FHE minimum operation
+14. **fhe-max** - FHE maximum operation
+15. **fhe-xor** - FHE bitwise XOR operation
+16. **fhe-bitwise** - FHE bitwise operations (AND, OR, NOT)
+17. **fhe-if-then-else** - Conditional FHE operations
+18. **fhe-comparison** - FHE comparison operations (eq, ne, gt, lt, ge, le, select)
 
 ### Access Control Examples (3)
 
@@ -434,7 +435,7 @@ npm run create-category <category-name> <output-dir>
 ```
 
 **Available Categories:**
-- `basic` - 14 basic examples (encryption, decryption, FHE operations)
+- `basic` - 18 basic examples (encryption, decryption, FHE operations)
 - `access-control` - 3 access control examples (FHE.allow, FHE.allowThis, FHE.allowTransient)
 - `input-proofs` - 4 input proof examples (basics, usage, anti-patterns, handles)
 - `anti-patterns` - 3 anti-pattern examples (common mistakes to avoid)
@@ -486,7 +487,7 @@ npm run generate-all-and-test -- --category basic
 ```
 
 **Features:**
-- ✅ Generates all 38 examples with `--with-docs` flag
+- ✅ Generates all 45 examples with `--with-docs` flag
 - ✅ Automatically changes directory into each output folder
 - ✅ Runs `npm test` in each folder (no `npm install` needed)
 - ✅ Shows summary of successes/failures
@@ -629,7 +630,7 @@ zama-bounty-11/
 
 ### Required Examples
 
-- ✅ **Basic Examples**: 15 examples covering encryption, decryption, and FHE operations (add, min, mul, div, xor, and, or, not, if-then-else)
+- ✅ **Basic Examples**: 18 examples covering encryption, decryption, and FHE operations (add, sub, mul, div, rem, min, max, xor, and, or, not, if-then-else, comparison)
 - ✅ **Access Control**: 3 examples demonstrating FHE.allow, FHE.allowThis, FHE.allowTransient
 - ✅ **Input Proofs**: 4 examples explaining input proofs and handles
 - ✅ **Anti-Patterns**: 3 examples showing common mistakes
@@ -795,10 +796,10 @@ The base template is cloned, so dependencies are managed per generated repositor
 
 ## 🎯 Key Achievements
 
-1. **40 Contracts Created** - All required categories covered
-2. **40 Test Suites** - Comprehensive coverage with success/failure cases
+1. **45 Contracts Created** - All required categories covered
+2. **45 Test Suites** - Comprehensive coverage with success/failure cases
 3. **6 Automation Scripts** - Fully functional scaffolding, batch generation, and maintenance tools
-4. **40 Documentation Files** - Auto-generated GitBook-compatible docs
+4. **45 Documentation Files** - Auto-generated GitBook-compatible docs
 5. **100% Compilation Success** - All contracts compile without errors
 6. **Educational Value** - Well-commented code explaining FHEVM concepts
 7. **Production-Ready Patterns** - Factory-based vesting wallets using OpenZeppelin's recommended clone pattern
@@ -878,9 +879,9 @@ BSD-3-Clause-Clear License
 
 **Overall Progress**: 100% ✅
 
-- ✅ Contracts: 41/41 (100%)
-- ✅ Tests: 41/41 (100%)
-- ✅ Documentation: 41/41 (100%)
+- ✅ Contracts: 45/45 (100%)
+- ✅ Tests: 45/45 (100%)
+- ✅ Documentation: 45/45 (100%)
 - ✅ Automation: 6/6 (100%)
 - ✅ Compilation: All contracts compile successfully
 - ✅ OpenZeppelin Examples: 10/10 (including factory-based vesting wallets, confidential voting, RWA, and omnibus)

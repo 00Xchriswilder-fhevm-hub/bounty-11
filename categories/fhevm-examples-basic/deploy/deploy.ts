@@ -103,8 +103,36 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`FHEBitwise contract: ${deployedFHEBitwise.address}`);
 
+  // Deploy FHESub
+  const deployedFHESub = await deploy("FHESub", {
+    from: deployer,
+    log: true,
+  });
+  console.log(`FHESub contract: ${deployedFHESub.address}`);
+
+  // Deploy FHERem
+  const deployedFHERem = await deploy("FHERem", {
+    from: deployer,
+    log: true,
+  });
+  console.log(`FHERem contract: ${deployedFHERem.address}`);
+
+  // Deploy FHEMax
+  const deployedFHEMax = await deploy("FHEMax", {
+    from: deployer,
+    log: true,
+  });
+  console.log(`FHEMax contract: ${deployedFHEMax.address}`);
+
+  // Deploy FHEComparison
+  const deployedFHEComparison = await deploy("FHEComparison", {
+    from: deployer,
+    log: true,
+  });
+  console.log(`FHEComparison contract: ${deployedFHEComparison.address}`);
+
 };
 
 export default func;
 func.id = "deploy_all";
-func.tags = ["all", "FHECounter", "EncryptSingleValue", "EncryptMultipleValues", "UserDecryptSingleValue", "UserDecryptMultipleValues", "HeadsOrTails", "HighestDieRoll", "FHEAdd", "FHEIfThenElse", "FHEMin", "FHEMul", "FHEXor", "FHEDiv", "FHEBitwise"];
+func.tags = ["all", "FHECounter", "EncryptSingleValue", "EncryptMultipleValues", "UserDecryptSingleValue", "UserDecryptMultipleValues", "HeadsOrTails", "HighestDieRoll", "FHEAdd", "FHEIfThenElse", "FHEMin", "FHEMul", "FHEXor", "FHEDiv", "FHEBitwise", "FHESub", "FHERem", "FHEMax", "FHEComparison"];

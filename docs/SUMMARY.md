@@ -1,15 +1,5 @@
 # FHEVM Examples Documentation
 
-## Advanced
-- [FHE Legacy Vault](fhe-legacy-vault.md)
-- [Simple Voting](simple-voting.md)
-- [Review Cards FHE](review-cards-fhe.md)
-- [Blind Auction](blind-auction.md)
-- [Confidential Portfolio Rebalancer](confidential-portfolio-rebalancer.md)
-- [Confidential Lending Pool](confidential-lending-pool.md)
-
-- [Confidential Yield Aggregator](confidential-yield-aggregator.md)
-
 ## Basic
 
 - [FHE Counter](fhe-counter.md)
@@ -33,6 +23,10 @@
 - [FHE Xor Operation](fhe-xor.md)
 - [FHE Div Operation](fhe-div.md)
 - [FHE Bitwise Operations](fhe-bitwise.md)
+- [FHE Sub Operation](fhe-sub.md)
+- [FHE Rem Operation](fhe-rem.md)
+- [FHE Max Operation](fhe-max.md)
+- [FHE Comparison Operations](fhe-comparison.md)
 
 - [FHE Add Operation](fheadd.md)
 
@@ -67,3 +61,13 @@
 - [Confidential Voting](confidential-voting.md)
 
 - [ERC7984 Example](erc7984-example.md)
+
+## Advanced
+- [Simple Voting](simple-voting.md)
+- [Review Cards FHE](review-cards-fhe.md)
+- [Blind Auction](blind-auction.md)
+- [Confidential Portfolio Rebalancer](confidential-portfolio-rebalancer.md)
+- [Confidential Lending Pool](confidential-lending-pool.md)
+- [Confidential Yield Aggregator](confidential-yield-aggregator.md)
+
+- [FHE Legacy Vault](fhe-legacy-vault.md)

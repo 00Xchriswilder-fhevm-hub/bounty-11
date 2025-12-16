@@ -169,6 +169,38 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     output: 'docs/fhe-bitwise.md',
     category: 'Basic - FHE Operations',
   },
+  'fhe-sub': {
+    title: 'FHE Sub Operation',
+    description: 'This example demonstrates the FHE.sub operation to subtract two encrypted values. The subtraction is performed homomorphically without decrypting either operand. Note: No underflow protection in FHE - ensure the first operand is greater than or equal to the second in production.',
+    contract: 'contracts/basic/fhe-operations/FHESub.sol',
+    test: 'test/basic/fhe-operations/FHESub.ts',
+    output: 'docs/fhe-sub.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-rem': {
+    title: 'FHE Rem Operation',
+    description: 'This example demonstrates the FHE.rem operation to compute the remainder (modulo) of an encrypted value divided by a plaintext modulus. Note: The modulus must be a plaintext value, not encrypted.',
+    contract: 'contracts/basic/fhe-operations/FHERem.sol',
+    test: 'test/basic/fhe-operations/FHERem.ts',
+    output: 'docs/fhe-rem.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-max': {
+    title: 'FHE Max Operation',
+    description: 'This example demonstrates the FHE.max operation to find the maximum of two encrypted values. The comparison is performed homomorphically and returns the larger value without revealing either input.',
+    contract: 'contracts/basic/fhe-operations/FHEMax.sol',
+    test: 'test/basic/fhe-operations/FHEMax.ts',
+    output: 'docs/fhe-max.md',
+    category: 'Basic - FHE Operations',
+  },
+  'fhe-comparison': {
+    title: 'FHE Comparison Operations',
+    description: 'This example demonstrates all FHE comparison operations on encrypted integers. Compare encrypted values without decrypting them using FHE.eq (equal), FHE.ne (not equal), FHE.gt (greater than), FHE.lt (less than), FHE.ge (greater or equal), FHE.le (less or equal), and FHE.select for conditional branching. Comparison results are returned as encrypted booleans (ebool).',
+    contract: 'contracts/basic/fhe-operations/FHEComparison.sol',
+    test: 'test/basic/fhe-operations/FHEComparison.ts',
+    output: 'docs/fhe-comparison.md',
+    category: 'Basic - FHE Operations',
+  },
   // Access Control Examples
   'access-control': {
     title: 'Access Control',
@@ -614,6 +646,7 @@ function analyzeContractCode(content: string): string {
     { pattern: /FHE\.sub\(/g, name: 'FHE.sub', desc: 'subtracting encrypted values' },
     { pattern: /FHE\.mul\(/g, name: 'FHE.mul', desc: 'multiplying encrypted values' },
     { pattern: /FHE\.div\(/g, name: 'FHE.div', desc: 'dividing encrypted values' },
+    { pattern: /FHE\.rem\(/g, name: 'FHE.rem', desc: 'remainder/modulo operations' },
     { pattern: /FHE\.xor\(/g, name: 'FHE.xor', desc: 'bitwise XOR operations' },
     { pattern: /FHE\.and\(/g, name: 'FHE.and', desc: 'bitwise AND operations' },
     { pattern: /FHE\.or\(/g, name: 'FHE.or', desc: 'bitwise OR operations' },
@@ -708,6 +741,7 @@ function extractMainOperation(contractContent: string): string | null {
     { pattern: /FHE\.or\(/g, name: 'FHE.or', description: 'bitwise OR on encrypted values' },
     { pattern: /FHE\.not\(/g, name: 'FHE.not', description: 'bitwise NOT on encrypted values' },
     { pattern: /FHE\.select\(/g, name: 'FHE.select', description: 'conditional selection (if-then-else) on encrypted values' },
+    { pattern: /FHE\.rem\(/g, name: 'FHE.rem', description: 'remainder/modulo operation on encrypted values' },
     { pattern: /FHE\.ge\(/g, name: 'FHE.ge', description: 'greater-than-or-equal comparison' },
     { pattern: /FHE\.gt\(/g, name: 'FHE.gt', description: 'greater-than comparison' },
     { pattern: /FHE\.le\(/g, name: 'FHE.le', description: 'less-than-or-equal comparison' },
@@ -857,6 +891,7 @@ function extractKeyConceptsFromComments(contractContent: string): Array<{ title:
         'FHE.sub': 'The `FHE.sub()` function performs subtraction on encrypted values, computing the difference without decrypting.',
         'FHE.mul': 'The `FHE.mul()` function performs multiplication on encrypted values, computing the product without decrypting.',
         'FHE.div': 'The `FHE.div()` function performs division on encrypted values, computing the quotient without decrypting.',
+        'FHE.rem': 'The `FHE.rem()` function computes the remainder (modulo) of an encrypted value divided by a plaintext modulus.',
       };
       concepts.push({
         title: `${mainOp} Operation`,
@@ -972,18 +1007,25 @@ function generateComprehensiveSections(
   sections += `## Overview\n\n`;
   const extractedDescription = extractDescription(contractContent);
   
+  // Check if config description is specific (contains FHE operation names)
+  const configHasSpecificOps = /FHE\.(eq|ne|gt|lt|ge|le|select|add|sub|mul|div|rem|min|max|xor|and|or|not)/i.test(config.description);
+  
   // Always prefer extracted description if it's substantial (has multiple parts or is comprehensive)
+  // UNLESS config has specific FHE operations mentioned (indicating a curated description)
   // Consider it substantial if it has multiple sentences, is longer than 80 chars, or has multiple clauses
-  const isExtractedSubstantial = extractedDescription && (
+  const isExtractedSubstantial = !configHasSpecificOps && extractedDescription && (
     extractedDescription.length > 80 ||
     (extractedDescription.match(/\./g) || []).length >= 2 ||
     extractedDescription.includes(',') && extractedDescription.length > 60 ||
     extractedDescription.includes('and') && extractedDescription.length > 70
   );
   
-  // If extracted is not substantial, enhance config description with code analysis
+  // If extracted is not substantial or config has specific ops, use config description
   let overviewDescription: string;
-  if (isExtractedSubstantial) {
+  if (configHasSpecificOps) {
+    // Use config description when it's specific
+    overviewDescription = config.description;
+  } else if (isExtractedSubstantial) {
     overviewDescription = extractedDescription;
   } else {
     // Enhance config description with code analysis for more comprehensive overview
@@ -1066,6 +1108,7 @@ function generateComprehensiveSections(
       'FHE.or': 'The `FHE.or()` function performs bitwise OR on encrypted values.',
       'FHE.not': 'The `FHE.not()` function performs bitwise NOT (complement) on encrypted values.',
       'FHE.select': 'The `FHE.select()` function performs conditional selection (if-then-else) on encrypted values based on an encrypted boolean condition.',
+      'FHE.rem': 'The `FHE.rem()` function computes the remainder (modulo) of an encrypted value divided by a plaintext modulus.',
     };
     
       sections += `### ${conceptNum}. ${mainOp} Operation\n\n`;
