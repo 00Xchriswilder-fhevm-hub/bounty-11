@@ -171,7 +171,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-sub': {
     title: 'FHE Sub Operation',
-    description: 'This example demonstrates the FHE.sub operation to subtract two encrypted values. The subtraction is performed homomorphically without decrypting either operand. Note: No underflow protection in FHE - ensure the first operand is greater than or equal to the second in production.',
+    description: 'This example demonstrates FHE.sub operation to subtract two encrypted values.',
     contract: 'contracts/basic/fhe-operations/FHESub.sol',
     test: 'test/basic/fhe-operations/FHESub.ts',
     output: 'docs/fhe-sub.md',
@@ -179,7 +179,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-rem': {
     title: 'FHE Rem Operation',
-    description: 'This example demonstrates the FHE.rem operation to compute the remainder (modulo) of an encrypted value divided by a plaintext modulus. Note: The modulus must be a plaintext value, not encrypted.',
+    description: 'This example demonstrates FHE.rem operation to compute remainder of encrypted value by plaintext modulus.',
     contract: 'contracts/basic/fhe-operations/FHERem.sol',
     test: 'test/basic/fhe-operations/FHERem.ts',
     output: 'docs/fhe-rem.md',
@@ -187,7 +187,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-max': {
     title: 'FHE Max Operation',
-    description: 'This example demonstrates the FHE.max operation to find the maximum of two encrypted values. The comparison is performed homomorphically and returns the larger value without revealing either input.',
+    description: 'This example demonstrates FHE.max operation to find maximum of two encrypted values.',
     contract: 'contracts/basic/fhe-operations/FHEMax.sol',
     test: 'test/basic/fhe-operations/FHEMax.ts',
     output: 'docs/fhe-max.md',
@@ -195,7 +195,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-comparison': {
     title: 'FHE Comparison Operations',
-    description: 'This example demonstrates all FHE comparison operations on encrypted integers. Compare encrypted values without decrypting them using FHE.eq (equal), FHE.ne (not equal), FHE.gt (greater than), FHE.lt (less than), FHE.ge (greater or equal), FHE.le (less or equal), and FHE.select for conditional branching. Comparison results are returned as encrypted booleans (ebool).',
+    description: 'This example demonstrates all FHE comparison operations (eq, ne, gt, lt, ge, le) and conditional selection using FHE.select.',
     contract: 'contracts/basic/fhe-operations/FHEComparison.sol',
     test: 'test/basic/fhe-operations/FHEComparison.ts',
     output: 'docs/fhe-comparison.md',
@@ -1007,25 +1007,18 @@ function generateComprehensiveSections(
   sections += `## Overview\n\n`;
   const extractedDescription = extractDescription(contractContent);
   
-  // Check if config description is specific (contains FHE operation names)
-  const configHasSpecificOps = /FHE\.(eq|ne|gt|lt|ge|le|select|add|sub|mul|div|rem|min|max|xor|and|or|not)/i.test(config.description);
-  
   // Always prefer extracted description if it's substantial (has multiple parts or is comprehensive)
-  // UNLESS config has specific FHE operations mentioned (indicating a curated description)
   // Consider it substantial if it has multiple sentences, is longer than 80 chars, or has multiple clauses
-  const isExtractedSubstantial = !configHasSpecificOps && extractedDescription && (
+  const isExtractedSubstantial = extractedDescription && (
     extractedDescription.length > 80 ||
     (extractedDescription.match(/\./g) || []).length >= 2 ||
     extractedDescription.includes(',') && extractedDescription.length > 60 ||
     extractedDescription.includes('and') && extractedDescription.length > 70
   );
   
-  // If extracted is not substantial or config has specific ops, use config description
+  // If extracted is not substantial, enhance config description with code analysis
   let overviewDescription: string;
-  if (configHasSpecificOps) {
-    // Use config description when it's specific
-    overviewDescription = config.description;
-  } else if (isExtractedSubstantial) {
+  if (isExtractedSubstantial) {
     overviewDescription = extractedDescription;
   } else {
     // Enhance config description with code analysis for more comprehensive overview
