@@ -318,7 +318,7 @@ zama-bounty-11/
 
 ### Anti-Pattern Examples (3)
 
-1. **view-with-encrypted** - Why view functions can't return encrypted values
+1. **fhe-permissions-anti-patterns** - Permission management anti-patterns (missing allowThis, allow, transfer permissions)
 2. **missing-allow-this** - Missing FHE.allowThis() permission
 3. **handle-misuse** - Incorrect handle usage
 

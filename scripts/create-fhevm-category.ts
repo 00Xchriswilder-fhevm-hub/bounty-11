@@ -76,6 +76,10 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/basic/fhe-operations/FHEXor.sol', test: 'test/basic/fhe-operations/FHEXor.ts' },
       { path: 'contracts/basic/fhe-operations/FHEDiv.sol', test: 'test/basic/fhe-operations/FHEDiv.ts' },
       { path: 'contracts/basic/fhe-operations/FHEBitwise.sol', test: 'test/basic/fhe-operations/FHEBitwise.ts' },
+      { path: 'contracts/basic/fhe-operations/FHESub.sol', test: 'test/basic/fhe-operations/FHESub.ts' },
+      { path: 'contracts/basic/fhe-operations/FHERem.sol', test: 'test/basic/fhe-operations/FHERem.ts' },
+      { path: 'contracts/basic/fhe-operations/FHEMax.sol', test: 'test/basic/fhe-operations/FHEMax.ts' },
+      { path: 'contracts/basic/fhe-operations/FHEComparison.sol', test: 'test/basic/fhe-operations/FHEComparison.ts' },
     ],
   },
   'access-control': {
@@ -101,7 +105,7 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
     name: 'Anti-Pattern Examples',
     description: 'Common mistakes and anti-patterns in FHEVM development, showing what NOT to do',
     contracts: [
-      { path: 'contracts/anti-patterns/ViewWithEncrypted.sol', test: 'test/anti-patterns/ViewWithEncrypted.ts' },
+      { path: 'contracts/anti-patterns/FHEPermissionsAntiPatterns.sol', test: 'test/anti-patterns/FHEPermissionsAntiPatterns.ts' },
       { path: 'contracts/anti-patterns/MissingAllowThis.sol', test: 'test/anti-patterns/MissingAllowThis.ts' },
       { path: 'contracts/anti-patterns/HandleMisuse.sol', test: 'test/anti-patterns/HandleMisuse.ts' },
     ],
@@ -135,6 +139,8 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/advanced/ReviewCardsFHE.sol', test: 'test/advanced/ReviewCardsFHE.ts' },
       { path: 'contracts/advanced/BlindAuction.sol', test: 'test/advanced/BlindAuction.ts' },
       { path: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol', test: 'test/advanced/ConfidentialPortfolioRebalancer.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
+      { path: 'contracts/advanced/ConfidentialLendingPool.sol', test: 'test/advanced/ConfidentialLendingPool.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
+      { path: 'contracts/advanced/ConfidentialYieldAggregator.sol', test: 'test/advanced/ConfidentialYieldAggregator.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
     ],
   },
 };

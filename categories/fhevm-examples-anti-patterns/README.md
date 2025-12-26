@@ -6,7 +6,7 @@ Common mistakes and anti-patterns in FHEVM development, showing what NOT to do
 
 This project contains 3 example contracts:
 
-1. **ViewWithEncrypted**
+1. **FHEPermissionsAntiPatterns**
 2. **MissingAllowThis**
 3. **HandleMisuse**
 
@@ -48,13 +48,13 @@ This project contains 3 example contracts:
 
 ## Contracts
 
-### ViewWithEncrypted
+### FHEPermissionsAntiPatterns
 
-Located in `contracts/ViewWithEncrypted.sol`
+Located in `contracts/FHEPermissionsAntiPatterns.sol`
 
 Run specific tests:
 ```bash
-npx hardhat test test/ViewWithEncrypted.ts
+npx hardhat test test/FHEPermissionsAntiPatterns.ts
 ```
 
 ### MissingAllowThis
@@ -95,7 +95,7 @@ npx hardhat deploy --network localhost
 npx hardhat deploy --network sepolia
 
 # Verify contracts
-npx hardhat verify --network sepolia <VIEWWITHENCRYPTED_ADDRESS>
+npx hardhat verify --network sepolia <FHEPERMISSIONSANTIPATTERNS_ADDRESS>
 npx hardhat verify --network sepolia <MISSINGALLOWTHIS_ADDRESS>
 npx hardhat verify --network sepolia <HANDLEMISUSE_ADDRESS>
 ```

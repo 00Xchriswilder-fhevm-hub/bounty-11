@@ -171,7 +171,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-sub': {
     title: 'FHE Sub Operation',
-    description: 'This example demonstrates FHE.sub operation to subtract two encrypted values.',
+    description: 'This example demonstrates the FHE.sub operation to subtract two encrypted values. The subtraction is performed homomorphically without decrypting either operand. Note: No underflow protection in FHE - ensure the first operand is greater than or equal to the second in production.',
     contract: 'contracts/basic/fhe-operations/FHESub.sol',
     test: 'test/basic/fhe-operations/FHESub.ts',
     output: 'docs/fhe-sub.md',
@@ -179,7 +179,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-rem': {
     title: 'FHE Rem Operation',
-    description: 'This example demonstrates FHE.rem operation to compute remainder of encrypted value by plaintext modulus.',
+    description: 'This example demonstrates the FHE.rem operation to compute the remainder (modulo) of an encrypted value divided by a plaintext modulus. Note: The modulus must be a plaintext value, not encrypted.',
     contract: 'contracts/basic/fhe-operations/FHERem.sol',
     test: 'test/basic/fhe-operations/FHERem.ts',
     output: 'docs/fhe-rem.md',
@@ -187,7 +187,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-max': {
     title: 'FHE Max Operation',
-    description: 'This example demonstrates FHE.max operation to find maximum of two encrypted values.',
+    description: 'This example demonstrates the FHE.max operation to find the maximum of two encrypted values. The comparison is performed homomorphically and returns the larger value without revealing either input.',
     contract: 'contracts/basic/fhe-operations/FHEMax.sol',
     test: 'test/basic/fhe-operations/FHEMax.ts',
     output: 'docs/fhe-max.md',
@@ -195,7 +195,7 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
   },
   'fhe-comparison': {
     title: 'FHE Comparison Operations',
-    description: 'This example demonstrates all FHE comparison operations (eq, ne, gt, lt, ge, le) and conditional selection using FHE.select.',
+    description: 'This example demonstrates all FHE comparison operations on encrypted integers. Compare encrypted values without decrypting them using FHE.eq (equal), FHE.ne (not equal), FHE.gt (greater than), FHE.lt (less than), FHE.ge (greater or equal), FHE.le (less or equal), and FHE.select for conditional branching. Comparison results are returned as encrypted booleans (ebool).',
     contract: 'contracts/basic/fhe-operations/FHEComparison.sol',
     test: 'test/basic/fhe-operations/FHEComparison.ts',
     output: 'docs/fhe-comparison.md',
@@ -260,12 +260,12 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     category: 'Input Proofs',
   },
   // Anti-Pattern Examples
-  'view-with-encrypted': {
-    title: 'View With Encrypted',
-    description: 'Why view functions cannot return encrypted values. Shows correct alternative patterns.',
-    contract: 'contracts/anti-patterns/ViewWithEncrypted.sol',
-    test: 'test/anti-patterns/ViewWithEncrypted.ts',
-    output: 'docs/view-with-encrypted.md',
+  'fhe-permissions-anti-patterns': {
+    title: 'FHE Permissions Anti-Patterns',
+    description: 'This example demonstrates common FHE permission anti-patterns that developers encounter. Learn what happens when you forget FHE.allowThis() after computation, when you miss FHE.allow(user) preventing decryption, when view functions return handles without proper permissions, and when transfers fail to propagate permissions to recipients. Each anti-pattern shows the WRONG way and the CORRECT fix.',
+    contract: 'contracts/anti-patterns/FHEPermissionsAntiPatterns.sol',
+    test: 'test/anti-patterns/FHEPermissionsAntiPatterns.ts',
+    output: 'docs/fhe-permissions-anti-patterns.md',
     category: 'Anti-Patterns',
   },
   'missing-allow-this': {
@@ -1007,18 +1007,25 @@ function generateComprehensiveSections(
   sections += `## Overview\n\n`;
   const extractedDescription = extractDescription(contractContent);
   
+  // Check if config description is specific (contains FHE operation names or permission functions)
+  const configHasSpecificOps = /FHE\.(eq|ne|gt|lt|ge|le|select|add|sub|mul|div|rem|min|max|xor|and|or|not|allowThis|allow|allowTransient)/i.test(config.description);
+  
   // Always prefer extracted description if it's substantial (has multiple parts or is comprehensive)
+  // UNLESS config has specific FHE operations mentioned (indicating a curated description)
   // Consider it substantial if it has multiple sentences, is longer than 80 chars, or has multiple clauses
-  const isExtractedSubstantial = extractedDescription && (
+  const isExtractedSubstantial = !configHasSpecificOps && extractedDescription && (
     extractedDescription.length > 80 ||
     (extractedDescription.match(/\./g) || []).length >= 2 ||
     extractedDescription.includes(',') && extractedDescription.length > 60 ||
     extractedDescription.includes('and') && extractedDescription.length > 70
   );
   
-  // If extracted is not substantial, enhance config description with code analysis
+  // If extracted is not substantial or config has specific ops, use config description
   let overviewDescription: string;
-  if (isExtractedSubstantial) {
+  if (configHasSpecificOps) {
+    // Use config description when it's specific
+    overviewDescription = config.description;
+  } else if (isExtractedSubstantial) {
     overviewDescription = extractedDescription;
   } else {
     // Enhance config description with code analysis for more comprehensive overview
@@ -1056,18 +1063,32 @@ function generateComprehensiveSections(
   
   // What You'll Learn section - extract from contract comments
   sections += `## What You'll Learn\n\n`;
-  const learnItems = extractWhatYoullLearn(contractContent);
-  if (learnItems.length > 0) {
-    learnItems.forEach(item => {
-      sections += `- ${item}\n`;
-    });
+  
+  // Special handling for anti-pattern contracts
+  const isAntiPattern = config.category.toLowerCase().includes('anti-pattern') || 
+                        config.title.toLowerCase().includes('anti-pattern');
+  
+  if (isAntiPattern && config.title.includes('Permissions')) {
+    // Custom learn items for FHE Permissions Anti-Patterns
+    sections += `- **Missing allowThis()** - What happens when you forget to grant contract permission after FHE operations\n`;
+    sections += `- **Missing allow(user)** - Why users can't decrypt values without explicit permission\n`;
+    sections += `- **View function permissions** - View functions CAN return handles, but users need permission to decrypt\n`;
+    sections += `- **Transfer permission propagation** - Why recipients can't use transferred balances without permission grants\n`;
+    sections += `- **Cross-contract delegation** - Using allowTransient for temporary access in cross-contract calls\n`;
   } else {
-    // Fallback to old method if no comments found
-    const keyConcepts = extractKeyConcepts(contractContent, testContent, config);
-    if (keyConcepts.length > 0) {
-      keyConcepts.forEach(concept => {
-        sections += `- ${concept}\n`;
+    const learnItems = extractWhatYoullLearn(contractContent);
+    if (learnItems.length > 0) {
+      learnItems.forEach(item => {
+        sections += `- ${item}\n`;
       });
+    } else {
+      // Fallback to old method if no comments found
+      const keyConcepts = extractKeyConcepts(contractContent, testContent, config);
+      if (keyConcepts.length > 0) {
+        keyConcepts.forEach(concept => {
+          sections += `- ${concept}\n`;
+        });
+      }
     }
   }
   sections += `\n`;
@@ -1079,8 +1100,24 @@ function generateComprehensiveSections(
   
   sections += `## Key Concepts\n\n`;
   
-  // Use concepts from contract comments if available
-  if (keyConceptsFromComments.length > 0) {
+  // Special handling for FHE Permissions Anti-Patterns
+  if (isAntiPattern && config.title.includes('Permissions')) {
+    sections += `### 1. FHE.allowThis() Permission\n\n`;
+    sections += `After any FHE computation that produces a new encrypted value, the contract must call \`FHE.allowThis(value)\` to grant itself permission to use that value in future operations. Without this, the contract loses access to its own computed values.\n\n`;
+    
+    sections += `### 2. FHE.allow(user) Permission\n\n`;
+    sections += `For users to decrypt encrypted values, they must be explicitly granted permission via \`FHE.allow(value, userAddress)\`. Without this, even if the value is stored correctly, no one can decrypt it.\n\n`;
+    
+    sections += `### 3. View Functions and Encrypted Handles\n\n`;
+    sections += `**Important clarification**: View functions CAN return encrypted handles (euint32, ebool, etc.). This is explicitly supported in FHEVM. However, the caller must have been granted permission to decrypt the handle. The common misconception is that view functions can't return encrypted values - they can, but ACL modifications (allow, allowThis) cannot happen in view functions.\n\n`;
+    
+    sections += `### 4. Permission Propagation in Transfers\n\n`;
+    sections += `When transferring encrypted values between users, both sender and recipient need permission updates. The sender's new balance and the recipient's new balance are both new encrypted values that require fresh permission grants.\n\n`;
+    
+    sections += `### 5. Cross-Contract Permissions with allowTransient\n\n`;
+    sections += `When calling another contract that needs to operate on your encrypted values, use \`FHE.allowTransient(value, targetContract)\` to grant temporary permission that expires at the end of the transaction. This is more gas-efficient than permanent permissions for single-use delegations.\n\n`;
+  } else if (keyConceptsFromComments.length > 0) {
+    // Use concepts from contract comments if available
     keyConceptsFromComments.forEach(concept => {
       sections += `### ${conceptNum}. ${concept.title}\n\n`;
       sections += `${concept.description}\n\n`;
@@ -1162,8 +1199,32 @@ function generateComprehensiveSections(
   
   sections += `## Step-by-Step Walkthrough\n\n`;
   
-  // Omnibus-specific walkthrough
-  if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+  // Anti-pattern specific walkthrough
+  if (isAntiPattern && config.title.includes('Permissions')) {
+    sections += `### Step 1: Understand the Anti-Pattern\n\n`;
+    sections += `Each function in this contract demonstrates a common permission mistake. The "wrong" functions show what NOT to do, while the "correct" functions show the proper implementation.\n\n`;
+    
+    sections += `### Step 2: Compare Wrong vs Correct Implementations\n\n`;
+    sections += `Study the pairs of functions:\n`;
+    sections += `- \`wrongMissingAllowThis()\` vs \`correctWithAllowThis()\`\n`;
+    sections += `- \`wrongMissingUserAllow()\` vs \`correctWithUserAllow()\`\n`;
+    sections += `- \`wrongStoreWithoutPermission()\` vs \`correctStoreWithPermission()\`\n`;
+    sections += `- \`wrongTransferWithoutPermission()\` vs \`correctTransferWithPermission()\`\n`;
+    sections += `- \`wrongCrossContractCall()\` vs \`correctCrossContractCall()\`\n\n`;
+    
+    sections += `### Step 3: Test Each Scenario\n\n`;
+    sections += `Run the test suite to see how each anti-pattern manifests:\n`;
+    sections += `- "Correct" functions allow successful decryption\n`;
+    sections += `- "Wrong" functions store values but users can't access them\n\n`;
+    
+    sections += `### Step 4: Apply to Your Code\n\n`;
+    sections += `When writing your own contracts:\n`;
+    sections += `1. Always call \`FHE.allowThis()\` after any FHE computation\n`;
+    sections += `2. Call \`FHE.allow(value, user)\` for each user who needs to decrypt\n`;
+    sections += `3. Update permissions for all parties in transfers\n`;
+    sections += `4. Use \`FHE.allowTransient()\` for cross-contract calls\n\n`;
+  } else if (config.title.includes('Omnibus') || contractContent.includes('ERC7984Omnibus')) {
+    // Omnibus-specific walkthrough
     sections += `### Step 1: Mint Tokens to Omnibus Account\n\n`;
     sections += `First, mint tokens to the omnibus account (omnibusFrom) that will handle the transfers. Use \`$_mint()\` to mint tokens to the omnibus account.\n\n`;
     

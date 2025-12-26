@@ -46,6 +46,7 @@
 ## Anti-Patterns
 - [Missing AllowThis](missing-allow-this.md)
 - [Handle Misuse](handle-misuse.md)
+- [FHE Permissions Anti-Patterns](fhe-permissions-anti-patterns.md)
 
 - [View With Encrypted](view-with-encrypted.md)
 

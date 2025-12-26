@@ -74,6 +74,10 @@ const EXAMPLES_BY_CATEGORY: Record<string, ExampleConfig[]> = {
     { name: 'fhe-xor', category: 'basic' },
     { name: 'fhe-div', category: 'basic' },
     { name: 'fhe-bitwise', category: 'basic' },
+    { name: 'fhe-sub', category: 'basic' },
+    { name: 'fhe-rem', category: 'basic' },
+    { name: 'fhe-max', category: 'basic' },
+    { name: 'fhe-comparison', category: 'basic' },
   ],
   'access-control': [
     { name: 'access-control', category: 'access-control' },
@@ -87,7 +91,7 @@ const EXAMPLES_BY_CATEGORY: Record<string, ExampleConfig[]> = {
     { name: 'handle-lifecycle', category: 'input-proofs' },
   ],
   'anti-patterns': [
-    { name: 'view-with-encrypted', category: 'anti-patterns' },
+    { name: 'fhe-permissions-anti-patterns', category: 'anti-patterns' },
     { name: 'missing-allow-this', category: 'anti-patterns' },
     { name: 'handle-misuse', category: 'anti-patterns' },
   ],
@@ -109,6 +113,8 @@ const EXAMPLES_BY_CATEGORY: Record<string, ExampleConfig[]> = {
     { name: 'review-cards-fhe', category: 'advanced' },
     { name: 'blind-auction', category: 'advanced' },
     { name: 'confidential-portfolio-rebalancer', category: 'advanced' },
+    { name: 'confidential-lending-pool', category: 'advanced' },
+    { name: 'confidential-yield-aggregator', category: 'advanced' },
   ],
 };
 
