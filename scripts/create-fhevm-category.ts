@@ -141,6 +141,7 @@ export const CATEGORIES: Record<string, CategoryConfig> = {
       { path: 'contracts/advanced/ConfidentialPortfolioRebalancer.sol', test: 'test/advanced/ConfidentialPortfolioRebalancer.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
       { path: 'contracts/advanced/ConfidentialLendingPool.sol', test: 'test/advanced/ConfidentialLendingPool.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
       { path: 'contracts/advanced/ConfidentialYieldAggregator.sol', test: 'test/advanced/ConfidentialYieldAggregator.ts', additionalFiles: ['contracts/openzeppelin/ERC7984Mock.sol'] },
+      { path: 'contracts/advanced/BeliefMarket.sol', test: 'test/advanced/BeliefMarket.ts' },
     ],
   },
 };

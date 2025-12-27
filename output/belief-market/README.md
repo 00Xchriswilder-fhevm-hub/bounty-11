@@ -1,6 +1,6 @@
-# FHEVM Example: view-with-encrypted
+# FHEVM Example: belief-market
 
-Why view functions cannot return encrypted values
+Confidential prediction market with encrypted voting, weighted stakes, prize pool management, and tally reveal after expiry
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ Why view functions cannot return encrypted values
 
 ## Contract
 
-The main contract is `ViewWithEncrypted` located in `contracts/ViewWithEncrypted.sol`.
+The main contract is `BeliefMarket` located in `contracts/BeliefMarket.sol`.
 
 ## Testing
 

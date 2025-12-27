@@ -356,6 +356,12 @@ export const EXAMPLES_MAP: Record<string, ExampleConfig> = {
     category: 'advanced',
     dependencies: ['contracts/openzeppelin/ERC7984Mock.sol'],
   },
+  'belief-market': {
+    contract: 'contracts/advanced/BeliefMarket.sol',
+    test: 'test/advanced/BeliefMarket.ts',
+    description: 'Confidential prediction market with encrypted voting, weighted stakes, prize pool management, and tally reveal after expiry',
+    category: 'advanced',
+  },
 };
 
 function copyDirectoryRecursive(source: string, destination: string): void {
@@ -1554,7 +1560,7 @@ function main(): void {
 
   // Set default output directory if not provided
   if (!outputDir) {
-    outputDir = path.join(process.cwd(), 'output', `fhevm-example-${exampleName}`);
+    outputDir = path.join(process.cwd(), 'output', exampleName);
   }
 
   createExample(exampleName, outputDir, withDocs);

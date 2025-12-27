@@ -4,7 +4,7 @@ Complex FHEVM applications including vaults, voting systems, rating systems, bli
 
 ## 📦 Included Examples
 
-This project contains 7 example contracts:
+This project contains 8 example contracts:
 
 1. **FHELegacyVault**
 2. **SimpleVoting_uint32**
@@ -13,6 +13,7 @@ This project contains 7 example contracts:
 5. **ConfidentialPortfolioRebalancer**
 6. **ConfidentialLendingPool**
 7. **ConfidentialYieldAggregator**
+8. **BeliefMarket**
 
 ## Quick Start
 
@@ -115,6 +116,15 @@ Run specific tests:
 npx hardhat test test/ConfidentialYieldAggregator.ts
 ```
 
+### BeliefMarket
+
+Located in `contracts/BeliefMarket.sol`
+
+Run specific tests:
+```bash
+npx hardhat test test/BeliefMarket.ts
+```
+
 
 ## Deployment
 
@@ -142,6 +152,7 @@ npx hardhat verify --network sepolia <BLINDAUCTION_ADDRESS>
 npx hardhat verify --network sepolia <CONFIDENTIALPORTFOLIOREBALANCER_ADDRESS>
 npx hardhat verify --network sepolia <CONFIDENTIALLENDINGPOOL_ADDRESS>
 npx hardhat verify --network sepolia <CONFIDENTIALYIELDAGGREGATOR_ADDRESS>
+npx hardhat verify --network sepolia <BELIEFMARKET_ADDRESS>
 ```
 
 ## Available Scripts

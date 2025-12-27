@@ -48,7 +48,6 @@
 - [Handle Misuse](handle-misuse.md)
 - [FHE Permissions Anti-Patterns](fhe-permissions-anti-patterns.md)
 
-- [View With Encrypted](view-with-encrypted.md)
 
 ## OpenZeppelin
 - [ERC7984 to ERC20 Wrapper](erc7984-to-erc20-wrapper.md)
@@ -70,5 +69,6 @@
 - [Confidential Portfolio Rebalancer](confidential-portfolio-rebalancer.md)
 - [Confidential Lending Pool](confidential-lending-pool.md)
 - [Confidential Yield Aggregator](confidential-yield-aggregator.md)
+- [Belief Market](belief-market.md)
 
 - [FHE Legacy Vault](fhe-legacy-vault.md)

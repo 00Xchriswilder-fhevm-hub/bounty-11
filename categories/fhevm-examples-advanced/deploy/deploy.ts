@@ -54,8 +54,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`ConfidentialYieldAggregator contract: ${deployedConfidentialYieldAggregator.address}`);
 
+  // Deploy BeliefMarket
+  const deployedBeliefMarket = await deploy("BeliefMarket", {
+    from: deployer,
+    log: true,
+  });
+  console.log(`BeliefMarket contract: ${deployedBeliefMarket.address}`);
+
 };
 
 export default func;
 func.id = "deploy_all";
-func.tags = ["all", "FHELegacyVault", "SimpleVoting_uint32", "ReviewCardsFHE", "BlindAuction", "ConfidentialPortfolioRebalancer", "ConfidentialLendingPool", "ConfidentialYieldAggregator"];
+func.tags = ["all", "FHELegacyVault", "SimpleVoting_uint32", "ReviewCardsFHE", "BlindAuction", "ConfidentialPortfolioRebalancer", "ConfidentialLendingPool", "ConfidentialYieldAggregator", "BeliefMarket"];

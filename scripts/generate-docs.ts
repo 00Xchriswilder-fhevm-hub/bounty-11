@@ -426,6 +426,15 @@ const EXAMPLES_CONFIG: Record<string, DocsConfig> = {
     category: 'Advanced',
     chapter: 'advanced',
   },
+  'belief-market': {
+    title: 'Belief Market',
+    description: 'Confidential prediction market where votes are encrypted until reveal. Demonstrates encrypted voting with weighted stakes, prize pool management with FHE, confidential tally reveal after expiry, winner determination, and prize distribution using FHE.select and FHE.add operations.',
+    contract: 'contracts/advanced/BeliefMarket.sol',
+    test: 'test/advanced/BeliefMarket.ts',
+    output: 'docs/belief-market.md',
+    category: 'Advanced',
+    chapter: 'advanced',
+  },
 };
 
 function readFile(filePath: string): string {

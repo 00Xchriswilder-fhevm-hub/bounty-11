@@ -1,13 +1,13 @@
 {
-  "name": "fhevm-example-view-with-encrypted",
-  "description": "Why view functions cannot return encrypted values",
+  "name": "fhevm-example-belief-market",
+  "description": "Confidential prediction market with encrypted voting, weighted stakes, prize pool management, and tally reveal after expiry",
   "version": "0.3.0-1",
   "engines": {
     "node": ">=20",
     "npm": ">=7.0.0"
   },
   "license": "BSD-3-Clause-Clear",
-  "homepage": "https://github.com/zama-ai/fhevm-examples/view-with-encrypted",
+  "homepage": "https://github.com/zama-ai/fhevm-examples/belief-market",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/zama-ai/fhevm-hardhat-template.git"

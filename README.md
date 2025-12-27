@@ -23,9 +23,9 @@ This project delivers a complete solution for the Zama Bounty Season 11 challeng
 
 | Component | Count | Status |
 |-----------|-------|--------|
-| **Contracts** | 45 | ✅ Complete |
-| **Tests** | 45 | ✅ Complete |
-| **Documentation** | 45 | ✅ Complete |
+| **Contracts** | 46 | ✅ Complete |
+| **Tests** | 46 | ✅ Complete |
+| **Documentation** | 46 | ✅ Complete |
 | **Automation Scripts** | 6 | ✅ Complete |
 | **Categories** | 6 | ✅ Complete |
 | **OpenZeppelin Examples** | 10 | ✅ Complete |
@@ -335,7 +335,7 @@ zama-bounty-11/
 9. **erc7984-rwa** - ERC7984 RWA (Real World Assets) with compliance features (pause, freeze, block users, force transfers)
 10. **erc7984-omnibus** - ERC7984Omnibus for omnibus transfers with encrypted sub-account addresses
 
-### Advanced Examples (7)
+### Advanced Examples (8)
 
 1. **fhe-legacy-vault** - Time-locked vault with IPFS
 2. **simple-voting** - Confidential voting system
@@ -344,6 +344,7 @@ zama-bounty-11/
 5. **confidential-portfolio-rebalancer** - Advanced portfolio management with automatic rebalancing using multiple ERC7984 tokens and complex FHE operations
 6. **confidential-lending-pool** - Confidential lending system with encrypted collateral, debt tracking, interest calculations, and liquidation logic
 7. **confidential-yield-aggregator** - Confidential yield aggregation with multiple strategies, encrypted yield calculations, allocation management, rebalancing, and compounding
+8. **belief-market** - Confidential prediction market with encrypted voting, weighted stakes, prize pool management, and tally reveal
 
 #### Confidential Portfolio Rebalancer - Test Results
 
@@ -639,7 +640,7 @@ zama-bounty-11/
   - Includes confidential voting with ERC7984Votes and delegation
   - Includes RWA (Real World Assets) with compliance features (pause, freeze, block, force transfer)
   - Proper upgradeable initialization following OpenZeppelin best practices
-- ✅ **Advanced Examples**: 4 complex examples (vault, voting, rating, blind auction)
+- ✅ **Advanced Examples**: 8 complex examples (vault, voting, rating, blind auction, portfolio rebalancer, lending pool, yield aggregator, belief market)
 
 ### Bonus Features
 
@@ -879,9 +880,9 @@ BSD-3-Clause-Clear License
 
 **Overall Progress**: 100% ✅
 
-- ✅ Contracts: 45/45 (100%)
-- ✅ Tests: 45/45 (100%)
-- ✅ Documentation: 45/45 (100%)
+- ✅ Contracts: 46/46 (100%)
+- ✅ Tests: 46/46 (100%)
+- ✅ Documentation: 46/46 (100%)
 - ✅ Automation: 6/6 (100%)
 - ✅ Compilation: All contracts compile successfully
 - ✅ OpenZeppelin Examples: 10/10 (including factory-based vesting wallets, confidential voting, RWA, and omnibus)
